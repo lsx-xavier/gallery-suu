@@ -6,9 +6,10 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const pageToken = searchParams.get("pageToken") || "";
     const limit = Number(searchParams.get("limit")) || 10;
-    const folderName = String(searchParams.get("folderName")) || "";
+    const parentFolder = String(searchParams.get("parentFolder")) || "";
+    const currentFolder = String(searchParams.get("currentFolder")) || "";
 
-    const response = await getImages(folderName, pageToken, limit);
+    const response = await getImages(parentFolder, pageToken, limit, currentFolder);
 
     const headers = new Headers({
       "Content-Type": "application/json",

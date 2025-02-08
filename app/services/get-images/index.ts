@@ -1,23 +1,13 @@
 
-import fs from "fs";
+import { GoogleAuthApi } from '@/config/apis/google';
 import { google } from 'googleapis';
-import path from "path";
 
-export default async function getImages(folderName: string, pageToken: string | undefined, limit: number | undefined) {
+export default async function getImages(parentFolder: string, pageToken: string | undefined, limit: number | undefined, currentFolder?: string) {
   try {
-    const keyPath = path.join(process.cwd(), "public/suu-fotos.key.json");
-    const credentials = JSON.parse(fs.readFileSync(keyPath, "utf-8"));
-    
-    const auth = new google.auth.GoogleAuth({
-      credentials,
-      scopes: ["https://www.googleapis.com/auth/drive.readonly"],
-    });
+    const googleAuth = await GoogleAuthApi();
+    const drive = google.drive({ version: "v3", auth: googleAuth });
 
-    console.log({folderName})
-
-    const drive = google.drive({ version: "v3", auth });
-    
-    const queryToFolders = `mimeType = 'application/vnd.google-apps.folder' and name contains '${folderName}' and trashed = false`;
+    const queryToFolders = `name='${parentFolder.replaceAll('-', " ")}' and mimeType = 'application/vnd.google-apps.folder' and  trashed = false`;
     const queryToSubFolders = ( folderId: string) => `'${folderId}' in parents and mimeType = 'application/vnd.google-apps.folder'`;
 
     // Buscar todas as pastas no Google Drive
@@ -33,11 +23,31 @@ export default async function getImages(folderName: string, pageToken: string | 
         throw new Error("Nenhuma pasta encontrada.");
       }
 
-      return await drive.files.list({
-        q: queryToSubFolders( resp.data.files?.[0].id || ""),
+      const parentFolders = await drive.files.list({
+        q: `'${resp.data.files?.[0].id}' in parents and mimeType = 'application/vnd.google-apps.folder'`,
         fields: "files(id, name)",
       }).then(async (resp) => {
-        console.log({resp: resp.data.files})
+        
+        if(!resp.data.files || resp.data.files.length === 0) {
+          throw new Error("Nenhuma pasta encontrada.");
+        }
+
+        return resp.data.files
+      })
+
+      const parentFolderHasWeb = parentFolders?.find(file => file.name?.toLowerCase() === 'web')
+
+      if(!currentFolder && parentFolderHasWeb) {
+        return parentFolderHasWeb.id
+      }
+
+      console.log(parentFolders)
+      
+
+      return await drive.files.list({
+        q: queryToSubFolders(parentFolders?.find(file => file.name?.toLowerCase() === currentFolder?.replaceAll("-", " ").toLowerCase())?.id || ""),
+        fields: "files(id, name)",
+      }).then(async (resp) => {
         
         if(!resp.data.files || resp.data.files.length === 0) {
           throw new Error("Nenhuma pasta encontrada.");
@@ -45,6 +55,8 @@ export default async function getImages(folderName: string, pageToken: string | 
 
         return resp.data.files?.find(i => i.name?.toLowerCase() === 'web')?.id
       })
+    }).catch((e) => {
+      console.log(e)
     });
     
     const {imageFiles, nextPageToken} = await drive.files.list({
@@ -53,7 +65,7 @@ export default async function getImages(folderName: string, pageToken: string | 
       pageSize: limit, // Limita o número de arquivos retornados
       pageToken: pageToken,  // Usa o token de página (start)
     }).then(async ({data: {files, nextPageToken}}) => {
-      console.log(files)
+      // console.log(files)
       // const tempFiles: {id: string, image: string, name: string}[] = [];
 
       // await Promise.all((files || []).map(async (file) => {
