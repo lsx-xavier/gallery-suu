@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 type GaleriaPageProps = {
   params: Promise<{
@@ -25,13 +25,28 @@ const {folderName} = React.use(params);
 
   useEffect(() => {fetchImages()},[fetchImages])
 
+  const imageRef = useRef<HTMLImageElement>(null)
+
   
   return (
-    <div className='grid grid-cols-6'>
+    <div className='grid grid-cols-4 gap-4'>
       {images?.map(image =>
-        <div>
-          <Image key={image.id} src={(image.webContentLink as string).split("&export=download")[0]} alt={image.name} fill style={{objectFit: "contain"}} />
-      </div>
+      <div key={image.id} >
+        {console.log(imageRef.current?.getBoundingClientRect().height)}
+          <Image
+          ref={imageRef}
+            src={(image.webContentLink as string).split("&export=download")[0]}
+            alt={image.name}
+            className='"w-full rounded-lg'
+            width="1920"
+            height="1080"
+            // height={imageRef.current?.getBoundingClientRect().height}
+            
+            // style={{objectFit: "contain"}}
+            // objectFit="cover"
+            // objectPosition="50%,50%"
+          />
+          </div>
       )}
     </div>
   )

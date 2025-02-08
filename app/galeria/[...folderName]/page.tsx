@@ -10,7 +10,6 @@ type FolderNameProps = {
 export default function Page({params}: FolderNameProps) {
   const {folderName} = React.use(params)
 
-  const [account, setAccount] = useState()
   const [user, setUser] = useState<string>()
   const [pass, setPass] = useState<string>()
   const [show, setShow] = useState<boolean>(false)
