@@ -14,7 +14,7 @@ const {folderName} = React.use(params);
   const fetchImages = useCallback(async () => {
     if(!folderName) return;
 
-    const {imageFiles, nextPageToken: newNextPageToken} = await fetch(`/api/get-images?limit=10&parentFolder=${folderName[0]}&currentFolder=${folderName[folderName.length - 1]}`, {
+    const {imageFiles} = await fetch(`/api/get-images?limit=10&parentFolder=${folderName[0]}&currentFolder=${folderName[folderName.length - 1]}`, {
       cache: "force-cache"
     }).then(resp => resp.json());
 
