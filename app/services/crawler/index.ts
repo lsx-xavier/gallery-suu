@@ -1,6 +1,8 @@
-import { GoogleAuthApi, googleApi } from "@/config/apis/google";
-import fs from "fs";
+import { getFoldersByIdOrQuery } from "@/config/apis/google";
+import fs from 'fs';
+import { drive_v3 } from "googleapis";
 import path from "path";
+
 import zlib from "zlib";
 
 export type FoldersDto = {
@@ -9,175 +11,89 @@ export type FoldersDto = {
   childs?: FoldersDto
 }[]
 
-export async function listFolders() {
+export async function crawlerTheFolders() {
   try {
-    const googleAuth = await GoogleAuthApi();
-    const drive = googleApi.drive({ version: "v3", auth: googleAuth });
+    const parentFolders = await getFoldersByIdOrQuery({
+      folderId: process.env.LINK_CLIENTES_FOLDER_ID
+    });
 
-    const linkClientesFolderId = await drive.files.list({
-      q: "name contains 'LINK CLIENTES'  and trashed = false",
-      fields: "files(id, name)",
-    }).then(resp => resp.data.files?.[0].id)
-    const queryGetAllFoldersWithOutWebAlta = `'${linkClientesFolderId}' in parents and mimeType = 'application/vnd.google-apps.folder'`
-    
-    
-   
-    const parentFolders = await drive.files.list({
-      q: queryGetAllFoldersWithOutWebAlta,
-      fields: "files(id, name)",
-    }).then(async (resp) => {
-      if(!resp) { 
-        throw new Error("Not have response")
+    const folders = [];
+    async function findWebFolderOrImage(folder: drive_v3.Schema$File) {
+      const hierarchy: {id: string, name: string, childs:  drive_v3.Schema$File[]} = {
+        id: folder.id!,
+        name: folder.name!,
+        childs: []
+      };
+
+      try {
+        const maybeFinded = await getFoldersByIdOrQuery({
+          query: `'${folder.id}' in parents and (mimeType = 'application/vnd.google-apps.folder' or mimeType contains 'image/') and trashed = false`,
+          fields: 'files(id, name, mimeType)'
+        })
+      
+
+      const findTheWebFolder = maybeFinded.find(i => i.name?.toLowerCase() === 'web');
+      if(findTheWebFolder) {
+       hierarchy.childs.push({
+        id: findTheWebFolder.id,
+        name: findTheWebFolder.name
+       });
+
+       return hierarchy;
       }
-      const allFolders = resp.data.files;
 
-      
-      if(!allFolders || allFolders.length === 0) {
-        throw new Error("Didn't find folders")
+      const findTheImageFolder = maybeFinded.find(i => i.mimeType?.startsWith("image/"))
+
+      if(findTheImageFolder) {
+        return hierarchy;
       }
       
-      return allFolders;
-    })
 
-    if(!parentFolders || parentFolders.length === 0) {
-      throw new Error("Broken folders")
+      for(const maybe of maybeFinded.filter(i => i.mimeType === "application/vnd.google-apps.folder")){
+        if(!maybe.id) continue;
+
+        const found = await findWebFolderOrImage(maybe);
+
+        if(found) {
+          hierarchy.childs.push(found);
+        }
+      }
+
+      return hierarchy
+    } catch(err) {
+      console.log(err)
     }
 
-    const findChildFoldersWebAlt =  async (folderId: string) => {
-      const queryGetAllFoldersWithOutWebAlta = `'${folderId}' in parents and (name = 'WEB' or name = 'Alta') and  mimeType = 'application/vnd.google-apps.folder'`
-      
-      return await drive.files.list({
-        q: queryGetAllFoldersWithOutWebAlta,
-        fields: "files(id, name)",
-      }).then(async (resp) => {
-        if(!resp) { 
-          throw new Error("Not have response")
-        }
+    } 
 
-        const foldersWithWebAlt = resp.data.files;
-        if(foldersWithWebAlt?.length === 0) {
-          console.error("Didn't find folders like 'WEB' and 'Alta'")
-          return;
-        }
-  
-        return foldersWithWebAlt;
-      })
-    }
-
-    const findChildFoldersNotWebAlt =  async (folderId: string) => {
-      const queryGetAllFoldersWithOutWebAlta = `'${folderId}' in parents and not (name = 'WEB' or name = 'Alta') and  mimeType = 'application/vnd.google-apps.folder'`
-      
-      return await drive.files.list({
-        q: queryGetAllFoldersWithOutWebAlta,
-        fields: "files(id, name)",
-      }).then(async (resp) => {
-        if(!resp) { 
-          throw new Error("Not have response")
-        }
-        const foldersWithOutWebAlt = resp.data.files;
-        
-        if( foldersWithOutWebAlt?.length === 0) {
-          console.error("Didn't find folders not like 'WEB' and 'Alta'");
-          return;
-        }
-  
-        return foldersWithOutWebAlt;
-      })
-    }
-
-    const folders: FoldersDto = [];
-    
     for (const parent of parentFolders) {
-      const childFolders: FoldersDto = [];
-      const subChildFolders: FoldersDto = [];
-
-      if(parent.name?.toLowerCase().includes('web') || parent.name?.toLowerCase().includes('alta')) {
+      if(parent.name?.toLowerCase() === 'web') {
         folders.push({
-          id: parent.id!,
+          id: parent.id,
           name: parent.name,
         })
         continue;
       }
 
-      const webAltFolders = await findChildFoldersWebAlt(parent.id as string);
+      if(!parent.id) continue;
 
-      if(webAltFolders) {
-        for(const webAltFolder of webAltFolders) {
-          if(!webAltFolder.id || !webAltFolder.name) continue;
-          
-          childFolders.push({
-            id: webAltFolder.id,
-            name: webAltFolder.name
-          })
-        }
+      const finded = await findWebFolderOrImage(parent)
 
-        folders.push({
-          id: parent.id!,
-          name: parent.name!,
-          childs: childFolders,
-        })
-      } else {
-        const subChildFoldersList = await findChildFoldersNotWebAlt(parent.id as string);
-        
-        if(subChildFoldersList) {
-          for(const subChildFoldersResp of subChildFoldersList) {
-            if(!subChildFoldersResp.id || !subChildFoldersResp.name) continue;
-
-            const webAltFolders = await findChildFoldersWebAlt(parent.id as string);
-
-            if(webAltFolders) {
-              for(const webAltFolder of webAltFolders) {
-                if(!webAltFolder.id || !webAltFolder.name) continue;
-
-                subChildFolders.push({
-                  id: webAltFolder.id,
-                  name: webAltFolder.name
-                })
-              }
-              
-              childFolders.push({
-                id: subChildFoldersResp.id!,
-                name: subChildFoldersResp.name!,
-                childs: subChildFolders,
-              })
-
-              folders.push({
-                id: parent.id!,
-                name: parent.name!,
-                childs: childFolders,
-              })
-
-            } else {
-              childFolders.push({
-                id: subChildFoldersResp.id!,
-                name: subChildFoldersResp.name!
-              })
-  
-              folders.push({
-                id: parent.id!,
-                name: parent.name!,
-                childs: childFolders,
-              })
-              continue;
-            } 
-          }
-        }
-      }
+      folders.push(finded)
     }
+    
+    try {
+      const jsonData = JSON.stringify(folders, null, 2);
+      
+      // Compacta o JSON usando Gzip
+      const compressedData = zlib.gzipSync(jsonData);
 
-    const jsonData = JSON.stringify(folders, null, 2);
+      const filePath = path.join(process.cwd(), "public", "drive_structure.gzip");
+      fs.writeFileSync(filePath, compressedData, 'binary');
+    } catch(err) {
+      console.log(err)
+    }
+  } catch(error) {
 
-    // Compacta o JSON usando Gzip
-    const compressedData = zlib.gzipSync(jsonData);
-
-    const filePath = path.join(process.cwd(), "public", "drive_structure.gzip");
-    fs.writeFileSync(filePath, compressedData, 'binary');
-
-
-    console.log(`Arquivo salvo em: ${filePath}`);
-
-  } catch (error) {
-    console.error("Erro ao listar pastas e arquivos:", error);
-    return {};
   }
 }

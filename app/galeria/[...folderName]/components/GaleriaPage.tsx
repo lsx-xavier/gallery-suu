@@ -14,7 +14,7 @@ const {folderName} = React.use(params);
   const fetchImages = useCallback(async () => {
     if(!folderName) return;
 
-    const {imageFiles} = await fetch(`/api/get-images?limit=10&parentFolder=${folderName[0]}&currentFolder=${folderName[folderName.length - 1]}`, {
+    const {imageFiles} = await fetch(`/api/get-images-from?limit=10&parentFolder=${folderName[0]}&targetFolder=${folderName[folderName.length - 1]}`, {
       cache: "force-cache"
     }).then(resp => resp.json());
 
@@ -32,7 +32,6 @@ const {folderName} = React.use(params);
     <div className='grid grid-cols-4 gap-4'>
       {images?.map(image =>
       <div key={image.id} >
-        {console.log(imageRef.current?.getBoundingClientRect().height)}
           <Image
           ref={imageRef}
             src={(image.webContentLink as string).split("&export=download")[0]}

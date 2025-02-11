@@ -12,39 +12,45 @@ export default function Page({params}: FolderNameProps) {
 
   const [user, setUser] = useState<string>()
   const [pass, setPass] = useState<string>()
-  const [show, setShow] = useState<boolean>(false)
+  const [show, setShow] = useState<boolean>(true)
 
   const handleAuth = useCallback(async (event: FormEvent<HTMLFormElement>) => {
-      if (!folderName || folderName[folderName.length - 1] === "create") return;
+    
+
+    if (!folderName || folderName[folderName.length - 1] === "create") return;
+    
       event.preventDefault();
 
-      setShow(false);
+      const teste = await fetch(`/api/crawler-new`);
 
-      try {
-      const account = await fetch(`/api/get-user-of-folder?folderName=${folderName?.[0]}`, {
-        cache: "force-cache"
-      }).then(resp => resp.json());
+
+    //   setShow(false);
+
+    //   try {
+    //   const account = await fetch(`/api/get-user-of-folder?folderName=${folderName?.[0]}`, {
+    //     cache: "force-cache"
+    //   }).then(resp => resp.json());
       
-      if(!account) {
-        throw new Error("With out permission")
-      }
+    //   if(!account) {
+    //     throw new Error("With out permission")
+    //   }
 
-      console.log({account})
-      console.log({pass,user})
-
-
-      if(account.user === user && account.pass === pass) {
-        setShow(true);
-
-        return;
-      }
-
-      throw new Error("Wrong account")
+    //   console.log({account})
+    //   console.log({pass,user})
 
 
-    } catch (error) {
-      window.alert(error.message)
-    }
+    //   if(account.user === user && account.pass === pass) {
+    //     setShow(true);
+
+    //     return;
+    //   }
+
+    //   throw new Error("Wrong account")
+
+
+    // } catch (error) {
+    //   window.alert(error.message)
+    // }
     }, [folderName, pass, user]);
 
 
