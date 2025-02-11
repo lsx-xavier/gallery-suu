@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import React, { useCallback, useEffect, useState } from 'react';
+import Masonry from 'react-masonry-css';
 
 type GaleriaPageProps = {
   params: Promise<{
@@ -43,19 +44,25 @@ export default function GaleriaPage({params}: GaleriaPageProps) {
   }, [folderName])
 
   useEffect(() => {fetchImages()},[fetchImages])
-
-
+  const breakpointColumns = {
+    default: 4,
+    1024: 3,
+    768: 2,
+    640: 1
+  };
   
   return (
-    // <div className='grid grid-cols-4 gap-4'>
-    <div className='columns-4 gap-4'>
+    <Masonry
+    breakpointCols={breakpointColumns}
+    className="flex gap-4"
+    columnClassName="flex flex-col gap-4"
+    >
       {images?.map(image =>
-      <div key={image.id} className='relative mb-4'>
+        <div key={image.id} className='relative break-inside-avoid'>
           <Image
             src={(image.webContentLink as string).split("&export=download")[0]}
             alt={image.name}
             className='"w-full rounded-lg !relative !h-[auto]'
-            // fill={true}
             objectFit="cover"
             loading='lazy'
             width={1920}
@@ -67,8 +74,8 @@ export default function GaleriaPage({params}: GaleriaPageProps) {
             }}
             placeholder={`data:image/svg+xml;base64,${toBase64(shimmer(1920, 1080))}`}
           />
-          </div>
+        </div>
       )}
-    </div>
+    </Masonry>
   )
 }
