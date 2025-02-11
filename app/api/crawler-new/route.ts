@@ -1,4 +1,4 @@
-import { crawlerTheFolders } from "@/app/services/crawler/crawler";
+import { crawlerTheFolders } from "@/app/services/crawler";
 
 import { NextResponse } from "next/server";
 
