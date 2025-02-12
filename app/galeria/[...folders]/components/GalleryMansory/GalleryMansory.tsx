@@ -18,7 +18,7 @@ export function GalleryMansory({ folders }: GalleryMansoryProps) {
       if(!folders) return;
       setIsFetching(true)
   
-      let url = `/api/get-images-from?limit=30`
+      let url = `/api/get-images-from?limit=18`
       if(nextPageProps) {
         url = url.concat(`&nextPageToken=${nextPageProps}`)
         console.log({url})
@@ -49,17 +49,21 @@ export function GalleryMansory({ folders }: GalleryMansoryProps) {
     });
   
     useEffect(() => {
-      const lastItem = rowVirtualizer.getVirtualItems().at(-1);
-      if (!lastItem && !images) return;
-      console.log(lastItem)
-      console.log(images?.length - 1)
-    
-      const isAtBottom = lastItem?.index >= images.length - 1;
-    
-      if (isAtBottom && !isFetching) {
-        fetchImages(nextPage)
-      }
-    }, [fetchImages, images, isFetching, nextPage, rowVirtualizer]);
+      const handleScroll = () => {
+        const scrollY = window.scrollY; // Quanto o usuário já rolou
+        const windowHeight = window.innerHeight; // Altura da viewport
+        const documentHeight = document.documentElement.scrollHeight; // Altura total da página
+  
+        const distanceToBottom = documentHeight - (scrollY + windowHeight);
+        
+        if (distanceToBottom < 400 && !isFetching && nextPage) {
+          fetchImages(nextPage);
+        }
+      };
+  
+      window.addEventListener('scroll', handleScroll);
+      return () => window.removeEventListener('scroll', handleScroll);
+    }, [fetchImages, isFetching, nextPage]);
   
     const breakpointColumns = {
       default: 4,
@@ -86,7 +90,7 @@ export function GalleryMansory({ folders }: GalleryMansoryProps) {
               alt={images[virtualRow.index]?.name}
               className='"w-full rounded-lg !relative !h-[auto]'
               objectFit="cover"
-              loading='lazy'
+              
               width={1920}
               height={1080}
               quality={50}
