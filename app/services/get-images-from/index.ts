@@ -32,8 +32,8 @@ function findFolderAndCheckWeb(folders, targetName, parentFolder?: string | unde
       }
     }
    
-
     if(folderNameLowercase === targetNameLowerCase) {
+      console.log('achou')
       const hasWebFolder = folder.childs.find(child => child.name.toLowerCase() === "web");
 
       if(hasWebFolder) {
@@ -48,9 +48,8 @@ function findFolderAndCheckWeb(folders, targetName, parentFolder?: string | unde
   return null;
 }
 
-export  default async function getImagesFrom(targetFolder: string, parentFolder?: string) {
+export  default async function getImagesFrom(targetFolder: string, parentFolder?: string, limit: number = 30, nextPageTokenProp: string | undefined = undefined) {
   try{
-    console.log({targetFolder}, {parentFolder})
     // Caminho do arquivo compactado
     const filePath = path.join(process.cwd(), "public", "drive_structure.gz");
     
@@ -58,22 +57,22 @@ export  default async function getImagesFrom(targetFolder: string, parentFolder?
     const decompressedData = zlib.gunzipSync(compressedData);
     const jsonData: [[[]]] = JSON.parse(decompressedData.toString("utf-8"));
 
-    const findTheFolder = findFolderAndCheckWeb(jsonData, targetFolder.replaceAll("-", " "), parentFolder?.replaceAll("-", " "));
+    const findTheFolder = findFolderAndCheckWeb(jsonData, targetFolder.replaceAll("-", " "), parentFolder?.replaceAll("-", " ") || undefined);
 
     const googleAuth = await GoogleAuthApi();
     const drive = googleApi.drive({ version: "v3", auth: googleAuth });
 
-    const {imageFiles} = await drive.files.list({
+    const {imageFiles, nextPageToken} = await drive.files.list({
       q: `'${findTheFolder.id}' in parents and mimeType contains 'image/'`,
       fields: "files(id, name, webViewLink, webContentLink), nextPageToken",
-      // pageSize: 10, // Limita o número de arquivos retornados
-      // pageToken: undefined,  // Usa o token de página (start)
-    }).then(async ({data: {files}}) => ({
+      pageSize: limit, // Limita o número de arquivos retornados
+      pageToken: nextPageTokenProp,  // Usa o token de página (start)
+    }).then(async ({data: {files, nextPageToken}}) => ({
       imageFiles: files,
-      // nextPageToken: nextPageToken
+      nextPageToken: nextPageToken
     }));
 
-    return {imageFiles}
+    return {imageFiles, nextPageToken}
   }catch(err) {
     console.log(err)
   }

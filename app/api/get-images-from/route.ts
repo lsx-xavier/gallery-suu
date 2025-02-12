@@ -4,10 +4,13 @@ import { NextResponse } from "next/server";
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
+    const limit = Number(searchParams.get("limit"));
     const targetFolder = String(searchParams.get("targetFolder")) || "";
-    const parentFolder = String(searchParams.get("parentFolder")) || "";
+  
+    const nextPageToken =searchParams.get("nextPageToken") ? String(searchParams.get("nextPageToken")) : undefined;
+    const parentFolder = searchParams.get("parentFolder") ? String(searchParams.get("parentFolder")) : undefined;
 
-    const response = await getImagesFrom(targetFolder, parentFolder);
+    const response = await getImagesFrom(targetFolder, parentFolder, limit, nextPageToken);
 
     const headers = new Headers({
       "Content-Type": "application/json",
