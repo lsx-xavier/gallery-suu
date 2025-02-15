@@ -1,12 +1,9 @@
+import { FolderRouteParams } from '@/entities/folder';
 import React from 'react';
 import CheckAuthentication from './components/CheckAuthentication/CheckAuthentication';
 import { FormCreateUser } from './components/CreateUserForm';
 
-type FolderNameProps = {
-  params: Promise<{folders: string[]}>
-}
-
-export default function Page({params}: FolderNameProps) {
+export default function Page({params}: FolderRouteParams) {
   const {folders} = React.use(params)
 
    if(folders.includes("create")) {

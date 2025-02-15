@@ -1,44 +1,51 @@
 'use client'
+import httpClient from '@/config/httpClient';
+import { FolderRouterDto, TokenFolderPage } from '@/entities/folder';
+import { ImageDto } from '@/entities/image';
 import { ShimmerImage } from '@/utils/ShimmerImage';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import Image from 'next/image';
 import { useCallback, useEffect, useState } from 'react';
 import Masonry from 'react-masonry-css';
+import { getApiFecthForImages } from './utils/ApiFetch';
 
-type GalleryMansoryProps = {
-  folders: string[];
-}
-
-export function GalleryMansory({ folders }: GalleryMansoryProps) {
-    const [images, setImages] = useState(undefined)
-    const [nextPage, setNextPage] = useState(undefined)
+export function GalleryMansory({ folders }: FolderRouterDto) {
+    const [images, setImages] = useState<ImageDto[] | undefined>(undefined)
+    const [nextPage, setNextPage] = useState<TokenFolderPage>(undefined)
     const [isFetching, setIsFetching] = useState(false)
   
-    const fetchImages = useCallback(async (nextPageProps?: string) => {
+    const fetchImages = useCallback(async (nextPageProps?: TokenFolderPage) => {
       if(!folders) return;
       setIsFetching(true)
-  
-      let url = `/api/get-images-from?limit=18`
-      if(nextPageProps) {
-        url = url.concat(`&nextPageToken=${nextPageProps}`)
-        console.log({url})
+
+      const response = await httpClient.get<{
+        imageFiles: ImageDto[], nextPageToken: TokenFolderPage 
+      }>({
+        url: getApiFecthForImages({ folders }, nextPageProps),
+        params: undefined,
+        moreOptions: (req) => req.on('response', (res) => {
+          console.log(`Baixando arquivo... Tamanho total: ${res.headers['content-length']} bytes`, {res});
+        })
+        .on('data', (chunk) => {
+          console.log(`Recebidos ${chunk.length} bytes`);
+        })
+        .on('end', () => {
+          console.log('Download concluído!');
+        })
+        .on('error', (err) => {
+          console.error('Erro no download:', err);
+        })
+      });
+      if(response) {
+        const {imageFiles, nextPageToken} = response.body
+
+        setNextPage(nextPageToken)
+        setImages((prev => [...(prev||[]), ...imageFiles]))
       }
-      if(folders.length > 1) {
-        url = url.concat(`&parentFolder=${folders[0]}&targetFolder=${folders[folders.length - 1]}`)
-      } else {
-        url = url.concat(`&targetFolder=${folders[0]}`)
-      }
-  
-      const {imageFiles, nextPageToken} = await fetch(url, {
-        cache: "force-cache"
-      }).then(resp => resp.json());
-  
+
       setIsFetching(false);
-      setNextPage(nextPageToken)
-      setImages((prev => [...(prev||[]), ...imageFiles]))
     }, [folders])
-    
-  
+
     useEffect(() => { fetchImages() }, [fetchImages])
   
     const rowVirtualizer = useVirtualizer({
@@ -56,7 +63,7 @@ export function GalleryMansory({ folders }: GalleryMansoryProps) {
   
         const distanceToBottom = documentHeight - (scrollY + windowHeight);
         
-        if (distanceToBottom < 400 && !isFetching && nextPage) {
+        if (distanceToBottom < 500 && !isFetching && nextPage) {
           fetchImages(nextPage);
         }
       };

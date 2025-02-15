@@ -11,7 +11,7 @@ export async function GET(req: Request) {
     const parentFolder = searchParams.get("parentFolder") ? String(searchParams.get("parentFolder")) : undefined;
 
     const response = await getImagesFrom(targetFolder, parentFolder, limit, nextPageToken);
-
+    
     const headers = new Headers({
       "Content-Type": "application/json",
       "Cache-Control": "s-maxage=60, stale-while-revalidate=600",

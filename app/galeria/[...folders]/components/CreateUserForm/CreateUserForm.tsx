@@ -82,7 +82,7 @@ export function FormCreateUser({params}: FormCreateUserProps) {
               Fechar
             </button>
 
-            <button type="button" onClick={() => redirect(`/galeria/${folders.filter(i => i !== "create").concat("/")}`)} className="border border-white bg-transparent rounded-md py-3 hover:bg-white/30 p-3">
+            <button type="button" onClick={() => redirect(`/galeria/${folders.filter(i => i !== "create").join("/")}`)} className="border border-white bg-transparent rounded-md py-3 hover:bg-white/30 p-3">
               Ir para galeria
             </button>
           </div>}

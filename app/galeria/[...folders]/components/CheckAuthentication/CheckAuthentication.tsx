@@ -1,14 +1,11 @@
 'use client'
 
+import { FolderRouterDto } from '@/entities/folder';
 import { useState } from 'react';
 import { AuthForm } from '../AuthForm';
 import { GalleryMansory } from '../GalleryMansory';
 
-type CheckAuthenticationProps = {
-  folders: string[]
-}
-
-export default function CheckAuthentication({ folders }: CheckAuthenticationProps) {
+export default function CheckAuthentication({ folders }: FolderRouterDto) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   if(!isAuthenticated) {
