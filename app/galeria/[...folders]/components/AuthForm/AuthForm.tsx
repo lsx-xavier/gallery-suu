@@ -18,7 +18,7 @@ export function AuthForm({ folders, setAuthenticated }: AuthFormProps) {
 
     const account = await fetch(`/api/get-user-of-folder?folderName=${folders?.[0]}`, {
       cache: "force-cache"
-    }).then(resp => resp.json());
+    }).then(resp => resp.json()).catch(res => console.log({res}));
     
     if(account && account.error) {
       setError("Precisa cadastrar a conta!")

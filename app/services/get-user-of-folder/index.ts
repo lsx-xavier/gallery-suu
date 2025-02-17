@@ -63,7 +63,7 @@ export default async function getUserOfFolder(folderName: string) {
 
     return maybeJson
   } catch (error: unknown) {
-    console.log({error})
+    
     throw new Error( error?.message as string );
   }
 }
