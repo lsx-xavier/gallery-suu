@@ -1,12 +1,13 @@
 import { drive_v3, google } from 'googleapis';
 
 export async function GoogleAuthApi () {
+  
   const googleKey = process.env.GOOGLE_KEY as string;
-    
-    return new google.auth.GoogleAuth({
-      credentials: JSON.parse(googleKey),
-      scopes: ["https://www.googleapis.com/auth/drive.readonly",'https://www.googleapis.com/auth/drive.file'],
-    });
+  const googleKeyParsed = JSON.parse(googleKey)
+  return new google.auth.GoogleAuth({
+    credentials: googleKeyParsed,
+    scopes: ["https://www.googleapis.com/auth/drive.readonly",'https://www.googleapis.com/auth/drive.file'],
+  });
 }
 
 export const googleApi = google;
