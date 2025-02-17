@@ -15,6 +15,7 @@ export function AuthForm({ folders, setAuthenticated }: AuthFormProps) {
  const handleAuth = useCallback(async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setAuthenticated(false);
+    console.log(process.env.GOOGLE_KEY as string)
 
     const account = await fetch(`/api/get-user-of-folder?folderName=${folders?.[0]}`, {
       cache: "force-cache"
