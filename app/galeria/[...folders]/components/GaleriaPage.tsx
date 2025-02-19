@@ -23,7 +23,6 @@ export default function GaleriaPage({params}: GaleriaPageProps) {
     let url = `/api/get-images-from?limit=30`
     if(nextPageProps) {
       url = url.concat(`&nextPageToken=${nextPageProps}`)
-      console.log({url})
     }
     if(folderName.length > 1) {
       url = url.concat(`&parentFolder=${folderName[0]}&targetFolder=${folderName[folderName.length - 1]}`)

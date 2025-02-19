@@ -1,4 +1,5 @@
 import { googleApi, GoogleAuthApi } from "@/config/apis/google";
+import { hashPassword } from "@/utils/encrypt-decrypt";
 import { Readable } from "stream";
 import zlib from "zlib";
 
@@ -50,8 +51,9 @@ export default async function createUserToFolder(folderName: string, user: strin
         return undefined
       });
 
-        
-      const acccountJson = JSON.stringify({ user: user, pass: pass });
+      const encryptPass = await hashPassword(pass)
+
+      const acccountJson = JSON.stringify({ user: user, pass: encryptPass });
       const gzipFile = zlib.gzipSync(acccountJson);
       const bufferStream = Readable.from(gzipFile);
 

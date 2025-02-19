@@ -1,4 +1,5 @@
 'use client'
+import { comparePassword } from '@/utils/encrypt-decrypt';
 import React, { FormEvent, useCallback, useState } from 'react';
 
 
@@ -15,7 +16,6 @@ export function AuthForm({ folders, setAuthenticated }: AuthFormProps) {
  const handleAuth = useCallback(async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setAuthenticated(false);
-    console.log(process.env.GOOGLE_KEY as string)
 
     const account = await fetch(`/api/get-user-of-folder?folderName=${folders?.[0]}`, {
       cache: "force-cache"
@@ -27,7 +27,15 @@ export function AuthForm({ folders, setAuthenticated }: AuthFormProps) {
       return;
     }
 
-    if(account.user === user && account.pass === pass) {
+    if(!pass) {
+      setError("Precisa digitar a senha!")
+
+      return;
+    }
+
+    const isSamePass = await comparePassword(pass ,account.pass)
+
+    if(account.user === user && isSamePass) {
       setAuthenticated(true)
       return;
     }

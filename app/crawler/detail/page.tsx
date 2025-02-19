@@ -27,7 +27,6 @@ export default  function Home() {
       // Fazer fetch do arquivo compactado
       const response = await fetch(`/api/get-images-from?targetFolder=natal 2023&parentFolder=keiti e diogo`).then(resp => resp.json());
       
-      console.log(response);
       
     } catch (error) {
       console.error("Erro ao carregar JSON:", error);
