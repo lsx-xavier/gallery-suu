@@ -1,9 +1,6 @@
 import { drive_v3, google } from 'googleapis';
 
 export async function GoogleAuthApi () {
-
-  console.log(process.env.GOOGLE_KEY)
-  
   const googleKey = process.env.GOOGLE_KEY as string;
   const googleKeyParsed = JSON.parse(googleKey)
   return new google.auth.GoogleAuth({

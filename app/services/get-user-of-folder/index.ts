@@ -3,9 +3,6 @@ import { GoogleAuthApi, googleApi } from '@/config/apis/google';
 import { gunzipSync } from 'zlib';
 
 export default async function getUserOfFolder(folderName: string) {
-  const tryGetKey = process.env.GOOGLE_KEY
-  console.log(tryGetKey)
-  return tryGetKey;
   try {
     const googleAuth = await GoogleAuthApi();
     const drive = googleApi.drive({ version: "v3", auth: googleAuth });
