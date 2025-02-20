@@ -1,47 +1,34 @@
 'use client'
-import { comparePassword } from '@/utils/encrypt-decrypt';
-import React, { FormEvent, useCallback, useState } from 'react';
-
+import httpClient from '@/config/httpClient';
+import { FormEvent, useCallback, useState } from 'react';
 
 type AuthFormProps = {
   folders: string[];
-  setAuthenticated: React.Dispatch<boolean>;
 }
 
-export function AuthForm({ folders, setAuthenticated }: AuthFormProps) {
+export function AuthForm({ folders }: AuthFormProps) {
   const [user, setUser] = useState<string>()
     const [pass, setPass] = useState<string>()
     const [error, setError] = useState<string | undefined>(undefined)
 
  const handleAuth = useCallback(async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setAuthenticated(false);
+    try {
+      const token = await httpClient.post({
+        url: '/auth',
+        body: {
+          user,
+          pass,
+          folderName: folders?.[0]
+        }
+      });
 
-    const account = await fetch(`/api/get-user-of-folder?folderName=${folders?.[0]}`, {
-      cache: "force-cache"
-    }).then(resp => resp.json()).catch(res => console.log({res}));
-    
-    if(account && account.error) {
-      setError("Precisa cadastrar a conta!")
-
-      return;
+      console.log({token})
+    } catch (error: unknown) {
+      const {body: { message }} = error as { body: { message: string } }
+      setError(message as string)
     }
-
-    if(!pass) {
-      setError("Precisa digitar a senha!")
-
-      return;
-    }
-
-    const isSamePass = await comparePassword(pass ,account.pass)
-
-    if(account.user === user && isSamePass) {
-      setAuthenticated(true)
-      return;
-    }
-
-    setError("Usuário ou senha errada!");
-  }, [folders, pass, user, setAuthenticated]);
+  }, [folders, pass, user]);
 
   if(error) {
     return (

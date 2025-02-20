@@ -37,7 +37,8 @@ export function GalleryMansory({ folders }: FolderRouterDto) {
         })
       });
       if(response) {
-        const {imageFiles, nextPageToken} = response.body
+        console.log({response})
+        const {imageFiles, nextPageToken} = response
 
         setNextPage(nextPageToken)
         setImages((prev => [...(prev||[]), ...imageFiles]))

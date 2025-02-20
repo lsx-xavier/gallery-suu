@@ -1,23 +1,23 @@
-'use client'
 
 import { FolderRouterDto } from '@/entities/folder';
-import { useState } from 'react';
+import { getTokenCookie } from '@/utils/get-token-cookie';
 import { AuthForm } from '../AuthForm';
 import { GalleryMansory } from '../GalleryMansory';
 
-export default function CheckAuthentication({ folders }: FolderRouterDto) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+export default async function CheckAuthentication({ folders }: FolderRouterDto) {
+  const hasToken = await getTokenCookie()
 
-  if(!isAuthenticated) {
+
+  if(!hasToken) {
     return (
       <div className="h-screen w-screen fixed top-0 left-0">
         <div className="absolute top-0 left-0 bg-gray-500/55 w-screen h-screen backdrop-blur-[1.5px]"/>
 
-          <AuthForm setAuthenticated={setIsAuthenticated} folders={folders} />
+          <AuthForm folders={folders} />
       </div>
     )
   }
-
+  
   return (
     <div><GalleryMansory folders={folders} /></div>
   )

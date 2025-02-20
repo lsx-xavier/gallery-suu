@@ -39,26 +39,33 @@ async function baseRequest<T>(
     const res = await req;
 
     if(!res) {
-      throw new Error("Any response recived")
+      throw {
+        body: "Any response recived.",
+        code: 500
+      }
     }
+
+    const finalRes = await res.body as unknown as TypedResponse<T>
     
-    return res as unknown as TypedResponse<T>;
+    return finalRes;
   } catch (err) {
     handleHttpError(err);
+
     return null;
   }
 }
 
 // Função de tratamento de erros centralizado
 function handleHttpError(error: any) {
-  if (error.response) {
-    console.error(`[HTTP ERROR]`, {
-      status: error.status,
-      body: error.response.body,
-    });
-  } else {
-    console.error(`[NETWORK ERROR]`, error);
+  if (error?.response) {
+    const { body, status } = error.response;
+    console.error(`[HTTP ERROR]`, { status, body });
+
+    throw { status, body };
   }
+
+  console.error(`[NETWORK ERROR]`, error);
+  throw { status: 0, body: "Erro desconhecido ou de rede" };
 }
 
 
