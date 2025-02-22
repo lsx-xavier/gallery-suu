@@ -11,6 +11,7 @@ export type FoldersDto = {
 
 export async function crawlerTheFolders() {
   try {
+    console.log('[crawler] start')
     const parentFolders = await getFoldersByIdOrQuery({
       folderId: process.env.LINK_CLIENTES_FOLDER_ID
     });
