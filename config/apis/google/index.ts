@@ -4,6 +4,8 @@ export async function GoogleAuthApi () {
   const googleKey = process.env.GOOGLE_KEY_BASE64 as string;
   const credentials = JSON.parse(Buffer.from(googleKey, 'base64').toString());
 
+  console.log("googleAuth", credentials)
+
   const googleAuth = new google.auth.GoogleAuth({
     credentials: credentials,
     scopes: [
@@ -11,6 +13,7 @@ export async function GoogleAuthApi () {
       "https://www.googleapis.com/auth/drive.file"
     ],
   });
+  console.log("googleAuth", googleAuth)
 
   return googleAuth;
 }
