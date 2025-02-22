@@ -2,7 +2,7 @@
 import request, { SuperAgentRequest } from 'superagent';
 import { DefaultHttpsDTO, HttpsGetDTO, HttpsMethods, HttpsPostPutDTO } from './type';
 
-const apiBaseUrl = "/api"
+const apiBaseUrl = process.env.API_BASE_URL || "https://localhost:3000/api"
 type TypedResponse<T> = Response & { body: T };
 
 // Configuração principal do Superagent

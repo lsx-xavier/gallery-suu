@@ -87,10 +87,11 @@ export async function crawlerTheFolders() {
     
     try {
       const jsonData = JSON.stringify(folders, null, 2);
+      // const jsonData = JSON.stringify({ teste: 'teste' }, null, 2);
 
       const response = await httpClient.post({
-        url: '/api/EdgeStore',
-        body: JSON.stringify({
+        url: '/EdgeStore',
+        body: {
           items: [
             {
               operation: "upsert",
@@ -98,7 +99,7 @@ export async function crawlerTheFolders() {
               value: jsonData
             }
           ]
-        })
+        }
       });
 
       console.log('response', response)
