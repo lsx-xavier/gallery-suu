@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const BASE_URL = process.env.EDGE_BASE_URL || '';
 const EDGE_CONFIG_KEY = process.env.EDGE_CONFIG_KEY || '';
-const EDGE_TOKEN_KEY = process.env.EDGE_TOKEN_KEY || '';
+const VERCEL_API_TOKEN = process.env.VERCEL_API_TOKEN || '';
 
 // export async function GET(req: NextRequest) {
 //   try {
@@ -30,25 +30,16 @@ const EDGE_TOKEN_KEY = process.env.EDGE_TOKEN_KEY || '';
 export async function POST(req: NextRequest) {
   console.log("Initializing edge store")
   try {
-    const { key, value } = await req.json();
-    console.log('key', key)
-    console.log('value', value)
+    const { body } = await req.json();
+    console.log('body', body)
 
     const response = await fetch(`${BASE_URL}/${EDGE_CONFIG_KEY}/items`, {
       method: 'PATCH',
       headers: {
-        'Authorization': `Bearer ${EDGE_TOKEN_KEY}`,
+        'Authorization': `Bearer ${VERCEL_API_TOKEN}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        items: [
-          {
-            operation: 'upsert',
-            key,
-            value
-          }
-        ]
-      })
+      body
     });
 
     if (!response.ok) {
