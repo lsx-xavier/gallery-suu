@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
     console.log('key', key)
     console.log('value', value)
 
-    const response = await fetch(`${BASE_URL}/${EDGE_CONFIG_KEY}`, {
+    const response = await fetch(`${BASE_URL}/${EDGE_CONFIG_KEY}/items`, {
       method: 'PATCH',
       headers: {
         'Authorization': `Bearer ${EDGE_TOKEN_KEY}`,
