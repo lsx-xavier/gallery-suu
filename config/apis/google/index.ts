@@ -27,18 +27,37 @@ export async function driveWithAuth() {
   return drive;
 };
 
-export async function getFoldersByIdOrQuery ({ folderId, query, fields = "files(id, name)", resParams }:{ folderId?: string, query?: string, fields?: string, resParams?: drive_v3.Params$Resource$Files$List}) { 
-  if(!folderId && !query) {
-    throw new Error(`Need at least one param`)
-  }
+export type GetFoldersByIdOrQueryProps = { folderId?: string, query?: string, fields?: string, resParams?: drive_v3.Params$Resource$Files$List }
+
+export async function getFoldersByIdOrQuery(
+  {
+    folderId,
+    query,
+    fields = "files(id, name)",
+    resParams
+  }: GetFoldersByIdOrQueryProps) {
+  console.log('[getFoldersByIdOrQuery] start', folderId, query);
+
+  if (!query) {
+    if (!folderId) {
+      throw {
+        message: `Need to past the FolderId, if you didn't pass the query`,
+        status: 500
+      }
+    };
+  } 
 
   const drive = await driveWithAuth();
 
   if (!drive) {
-    console.error(`Drive not found`)
+    throw {
+      message: `Get some error with the drive`,
+      status: 500
+    }
   }
 
   const queryString = query ?? `'${folderId}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`;
+  console.log('[getFoldersByIdOrQuery] queryString', queryString);
 
   const files = await drive.files.list({
     q: queryString,
@@ -47,25 +66,18 @@ export async function getFoldersByIdOrQuery ({ folderId, query, fields = "files(
   }).then((res) => {
 
     if (!res) {
-      throw {
-        message: 'Didn\'t find any result',
-        status: 404
-      }
+      console.error('Didn\'t get response from the drive list');
+      return [];
     }
 
     if (!res.data.files || res.data.files?.length === 0) {
-      throw {
-        message: `Didn't find many folders in '${folderId}'`,
-        status: 404
-      }
+      console.error(`Didn't find any folders in '${folderId || query}'`);
+      return [];
     }
 
     return res.data.files;
   }).catch(err => {
-    throw {
-      message: err,
-      code: 500
-    }
+    throw err
   });
 
   return files;

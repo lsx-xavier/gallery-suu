@@ -4,14 +4,15 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
+    console.log('[crawler-API] Start')
+
     crawlerTheFolders();
 
-    console.log('[crawler-new] Start')
-    return NextResponse.json('[crawler-new] Start', {
+    return NextResponse.json('[crawler-API] Finished', {
       status: 200,
     });
   } catch (error) {
-    console.log('[crawler-new] Get some error', error)
-    return NextResponse.json({ error: '[crawler-new] Get some error' }, { status: 500 });
+    console.log('[crawler-API] Get some error', error)
+    return NextResponse.json({ error: '[crawler-API] Get some error' }, { status: 500 });
   }
 }

@@ -4,28 +4,28 @@ const BASE_URL = process.env.EDGE_BASE_URL || '';
 const EDGE_CONFIG_KEY = process.env.EDGE_CONFIG_KEY || '';
 const EDGE_TOKEN_KEY = process.env.EDGE_TOKEN_KEY || '';
 
-export async function GET(req: NextRequest) {
-  try {
-    const { searchParams } = new URL(req.url);
+// export async function GET(req: NextRequest) {
+//   try {
+//     const { searchParams } = new URL(req.url);
 
 
-    const response = await fetch(`${BASE_URL}/${EDGE_CONFIG_KEY}`, {
-      headers: {
-        'Authorization': `Bearer ${EDGE_TOKEN_KEY}`,
-      },
-    });
+//     const response = await fetch(`${BASE_URL}/${EDGE_CONFIG_KEY}`, {
+//       headers: {
+//         'Authorization': `Bearer ${EDGE_TOKEN_KEY}`,
+//       },
+//     });
 
-    if (!response.ok) {
-      throw new Error('Failed to fetch from Edge Config');
-    }
+//     if (!response.ok) {
+//       throw new Error('Failed to fetch from Edge Config');
+//     }
 
-    const data = await response.json();
-    return NextResponse.json(data);
-  } catch (error) {
-    console.error('Error fetching from edge config:', error);
-    return NextResponse.json({ error: 'Failed to fetch from Edge Config' }, { status: 500 });
-  }
-}
+//     const data = await response.json();
+//     return NextResponse.json(data);
+//   } catch (error) {
+//     console.error('Error fetching from edge config:', error);
+//     return NextResponse.json({ error: 'Failed to fetch from Edge Config' }, { status: 500 });
+//   }
+// }
 
 export async function POST(req: NextRequest) {
   console.log("Initializing edge store")

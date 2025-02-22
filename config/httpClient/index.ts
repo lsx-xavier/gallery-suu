@@ -34,9 +34,11 @@ async function baseRequest<T>(
     else if (data) req.send(data);
 
     // Log da requisição (debug)
-    console.debug(`[${method.toUpperCase()}] ${apiBaseUrl}${url}`, data || '');
+    console.debug(`[${method.toUpperCase()} (Before execute)] ${apiBaseUrl}${url}`, data || '');
 
     const res = await req;
+
+    console.debug(`[${method.toUpperCase()} (After execute)] ${apiBaseUrl}${url}`, data || '');
 
     if(!res) {
       throw {
@@ -44,8 +46,10 @@ async function baseRequest<T>(
         code: 500
       }
     }
+    console.debug(`[${method.toUpperCase()} (After Response)] ${apiBaseUrl}${url}`, data || '');
 
     const finalRes = await res.body as unknown as TypedResponse<T>
+    console.debug(`[${method.toUpperCase()} (After Get Response)] ${apiBaseUrl}${url}`, data || '');
     
     return finalRes;
   } catch (err) {
@@ -65,7 +69,7 @@ function handleHttpError(error: any) {
   }
 
   console.error(`[NETWORK ERROR]`, error);
-  throw { status: 0, body: "Erro desconhecido ou de rede" };
+  throw { status: 0, body: `Erro: ${error.response}` };
 }
 
 

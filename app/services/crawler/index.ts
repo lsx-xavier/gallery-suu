@@ -1,7 +1,5 @@
-import { getFoldersByIdOrQuery } from "@/config/apis/google";
-import { drive_v3 } from "googleapis";
-
 import httpClient from "@/config/httpClient";
+
 
 export type FoldersDto = {
   id: string;
@@ -11,83 +9,87 @@ export type FoldersDto = {
 
 export async function crawlerTheFolders() {
   try {
-    console.log('[crawler] start')
-    const parentFolders = await getFoldersByIdOrQuery({
-      folderId: process.env.LINK_CLIENTES_FOLDER_ID
-    });
+    // const folderId = process.env.LINK_CLIENTES_FOLDER_ID
+    // console.log('[crawler-SERVICE] start', folderId)
 
-    const folders = [];
-    async function findWebFolderOrImage(folder: drive_v3.Schema$File) {
-      const hierarchy: {id: string, name: string, childs:  drive_v3.Schema$File[]} = {
-        id: folder.id!,
-        name: folder.name!,
-        childs: []
-      };
+    // const parentFolders = await getFoldersByIdOrQuery({
+    //   folderId: folderId!
+    // });
+
+    // console.log('[crawler-SERVICE] parentFolders', parentFolders)
+
+    // const folders = [];
+    // async function findWebFolderOrImage(folder: drive_v3.Schema$File) {
+    //   const hierarchy: {id: string, name: string, childs:  drive_v3.Schema$File[]} = {
+    //     id: folder.id!,
+    //     name: folder.name!,
+    //     childs: []
+    //   };
+
+    //   try {
+    //     const maybeFinded = await getFoldersByIdOrQuery({
+    //       query: `'${folder.id}' in parents and (mimeType = 'application/vnd.google-apps.folder' or mimeType contains 'image/') and trashed = false`,
+    //       fields: 'files(id, name, mimeType)'
+    //     })
 
 
-      try {
-        const maybeFinded = await getFoldersByIdOrQuery({
-          query: `'${folder.id}' in parents and (mimeType = 'application/vnd.google-apps.folder' or mimeType contains 'image/') and trashed = false`,
-          fields: 'files(id, name, mimeType)'
-        })
-      
+    //     const findTheWebFolder = maybeFinded.find(i => i.name?.toLowerCase() === 'web');
+    //     if (findTheWebFolder) {
+    //       hierarchy.childs.push({
+    //         id: findTheWebFolder.id,
+    //         name: findTheWebFolder.name
+    //       });
 
-      const findTheWebFolder = maybeFinded.find(i => i.name?.toLowerCase() === 'web');
-      if(findTheWebFolder) {
-       hierarchy.childs.push({
-        id: findTheWebFolder.id,
-        name: findTheWebFolder.name
-       });
+    //       return hierarchy;
+    //     }
 
-       return hierarchy;
-      }
+    //     const findTheImageFolder = maybeFinded.find(i => i.mimeType?.startsWith("image/"))
+    //     if (findTheImageFolder) {
+    //       return hierarchy;
+    //     }
 
-      const findTheImageFolder = maybeFinded.find(i => i.mimeType?.startsWith("image/"))
+    //     for (const maybe of maybeFinded.filter(i => i.mimeType === "application/vnd.google-apps.folder")) {
+    //       if (!maybe.id) continue;
 
-      if(findTheImageFolder) {
-        return hierarchy;
-      }
-      
+    //       const found = await findWebFolderOrImage(maybe);
 
-      for(const maybe of maybeFinded.filter(i => i.mimeType === "application/vnd.google-apps.folder")){
-        if(!maybe.id) continue;
+    //       if (found) {
+    //         hierarchy.childs.push(found);
+    //       }
+    //     }
 
-        const found = await findWebFolderOrImage(maybe);
+    //     return hierarchy
+    //   } catch (err) {
+    //     throw {
+    //       message: err,
+    //       status: 404
+    //     }
+    //   }
+    // }
 
-        if(found) {
-          hierarchy.childs.push(found);
-        }
-      }
+    // for (const parent of parentFolders) {
+    //   if(parent.name?.toLowerCase() === 'web') {
+    //     folders.push({
+    //       id: parent.id,
+    //       name: parent.name,
+    //     })
+    //     continue;
+    //   }
 
-      return hierarchy
-    } catch(err) {
-      console.log(err)
-    }
+    //   if(!parent.id) continue;
 
-    } 
+    //   const finded = await findWebFolderOrImage(parent)
 
-    for (const parent of parentFolders) {
-      if(parent.name?.toLowerCase() === 'web') {
-        folders.push({
-          id: parent.id,
-          name: parent.name,
-        })
-        continue;
-      }
-
-      if(!parent.id) continue;
-
-      const finded = await findWebFolderOrImage(parent)
-
-      folders.push(finded)
-    }
+    //   folders.push(finded)
+    // }
     
     try {
-      const jsonData = JSON.stringify(folders, null, 2);
+      // const jsonData = JSON.stringify(folders, null, 2);
+      const jsonData = JSON.stringify({ teste: 'teste' }, null, 2);
 
       const response = await httpClient.post({
-        url: '/api/edgeStore',
-        body: JSON.stringify({ key: 'drive-structure', value: jsonData })
+        url: '/EdgeStore',
+        body: JSON.stringify({ key: 'teste', value: jsonData })
       });
 
       console.log('response', response)
@@ -100,10 +102,12 @@ export async function crawlerTheFolders() {
       // const filePath = path.join(process.cwd(), "public", "drive_structure.gzip");
       // fs.writeFileSync(filePath, compressedData, 'binary');
     } catch(err) {
-      console.log("error of edge on crawler", err)
+      throw {
+        message: `[crawler-SERVICE] Error of edge on crawler: ${err?.body}`,
+        code: err?.status || 500
+      }
     }
   } catch(error) {
-    console.log("error of crawler", error)
-
+    throw error
   }
 }
