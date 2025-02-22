@@ -4,7 +4,7 @@ import CheckAuthentication from './components/CheckAuthentication/CheckAuthentic
 import { FormCreateUser } from './components/CreateUserForm';
 
 export default function Page({params}: FolderRouteParams) {
-  const {folders} = React.use(params)
+  const { folders } = React.use(params)
 
    if(folders.includes("create")) {
         return (

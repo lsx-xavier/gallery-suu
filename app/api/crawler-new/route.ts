@@ -2,10 +2,10 @@ import { crawlerTheFolders } from "@/app/services/crawler";
 
 import { NextResponse } from "next/server";
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
-
     const response = await crawlerTheFolders();
+    console.log('response', response)
 
     return NextResponse.json(response, {
       status: 200,

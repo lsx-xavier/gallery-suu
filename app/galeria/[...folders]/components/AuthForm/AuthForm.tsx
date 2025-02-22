@@ -1,5 +1,6 @@
 'use client'
 import httpClient from '@/config/httpClient';
+import { useRouter } from 'next/router';
 import { FormEvent, useCallback, useState } from 'react';
 
 type AuthFormProps = {
@@ -7,6 +8,7 @@ type AuthFormProps = {
 }
 
 export function AuthForm({ folders }: AuthFormProps) {
+  const router = useRouter()
   const [user, setUser] = useState<string>()
     const [pass, setPass] = useState<string>()
     const [error, setError] = useState<string | undefined>(undefined)
@@ -14,7 +16,7 @@ export function AuthForm({ folders }: AuthFormProps) {
  const handleAuth = useCallback(async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      const token = await httpClient.post({
+      await httpClient.post({
         url: '/auth',
         body: {
           user,
@@ -23,12 +25,12 @@ export function AuthForm({ folders }: AuthFormProps) {
         }
       });
 
-      console.log({token})
+      router.reload()
     } catch (error: unknown) {
       const {body: { message }} = error as { body: { message: string } }
       setError(message as string)
     }
-  }, [folders, pass, user]);
+  }, [folders, pass, user, router]);
 
   if(error) {
     return (

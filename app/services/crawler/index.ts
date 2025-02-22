@@ -1,9 +1,7 @@
 import { getFoldersByIdOrQuery } from "@/config/apis/google";
-import fs from 'fs';
 import { drive_v3 } from "googleapis";
-import path from "path";
 
-import zlib from "zlib";
+import httpClient from "@/config/httpClient";
 
 export type FoldersDto = {
   id: string;
@@ -24,6 +22,7 @@ export async function crawlerTheFolders() {
         name: folder.name!,
         childs: []
       };
+
 
       try {
         const maybeFinded = await getFoldersByIdOrQuery({
@@ -84,16 +83,26 @@ export async function crawlerTheFolders() {
     
     try {
       const jsonData = JSON.stringify(folders, null, 2);
-      
-      // Compacta o JSON usando Gzip
-      const compressedData = zlib.gzipSync(jsonData);
 
-      const filePath = path.join(process.cwd(), "public", "drive_structure.gzip");
-      fs.writeFileSync(filePath, compressedData, 'binary');
+      const response = await httpClient.post({
+        url: '/api/edgeStore',
+        body: JSON.stringify({ key: 'drive-structure', value: jsonData })
+      });
+
+      console.log('response', response)
+
+      return response;
+
+      // // Compacta o JSON usando Gzip
+      // const compressedData = zlib.gzipSync(jsonData);
+
+      // const filePath = path.join(process.cwd(), "public", "drive_structure.gzip");
+      // fs.writeFileSync(filePath, compressedData, 'binary');
     } catch(err) {
-      console.log(err)
+      console.log("error of edge on crawler", err)
     }
   } catch(error) {
+    console.log("error of crawler", error)
 
   }
 }

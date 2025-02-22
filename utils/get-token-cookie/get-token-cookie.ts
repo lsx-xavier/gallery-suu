@@ -8,7 +8,9 @@ import { headers } from "next/headers";
 export async function getTokenCookie() {
   const headersList = await headers();
   const token = headersList.get("cookie");
-  const tokenSplit = token?.slice(token.indexOf("=") + 1, token.indexOf(';'))
+  if(!token?.includes('userToken')) return undefined;
+  
+  const tokenSplit = token?.slice(token.indexOf("userToken") + 2, token.indexOf(';'))
 
   return tokenSplit
 }

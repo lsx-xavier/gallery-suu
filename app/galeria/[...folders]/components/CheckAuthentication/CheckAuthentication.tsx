@@ -5,8 +5,9 @@ import { AuthForm } from '../AuthForm';
 import { GalleryMansory } from '../GalleryMansory';
 
 export default async function CheckAuthentication({ folders }: FolderRouterDto) {
+  // verificar forma de reload para que ele puxe esse dado novamente
   const hasToken = await getTokenCookie()
-
+  console.log(hasToken)
 
   if(!hasToken) {
     return (
