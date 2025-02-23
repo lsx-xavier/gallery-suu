@@ -6,7 +6,15 @@ export async function GET() {
   try {
     console.log('[crawler-API] Start')
 
-    await crawlerTheFolders();
+    crawlerTheFolders(
+      (message) => console.log(message)
+    )
+      .then(() => {
+        console.log('[API] Crawler completed successfully');
+      })
+      .catch(error => {
+        console.error('[API] Crawler error:', error);
+      });
 
     return NextResponse.json('[crawler-API] Finished', {
       status: 200,

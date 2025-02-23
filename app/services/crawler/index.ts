@@ -11,9 +11,12 @@ type FolderStructure = {
   parentSlug?: string;
 }
 
+type OnProgress = (message: string) => void;
+
 async function processFolderStructure(
   folder: drive_v3.Schema$File,
-  parentSlug?: string
+  parentSlug?: string,
+  onProgress?: OnProgress
 ): Promise<FolderStructure | null> {
   try {
     const currentSlug = createSlug(folder.name!);
@@ -42,7 +45,7 @@ async function processFolderStructure(
         parentSlug
       };
 
-      await saveToRedis(folderStructure);
+      await saveToRedis(folderStructure, onProgress);
       return folderStructure;
     }
 
@@ -56,13 +59,13 @@ async function processFolderStructure(
         parentSlug
       };
 
-      await saveToRedis(folderStructure);
+      await saveToRedis(folderStructure, onProgress);
       return folderStructure;
     }
 
     // Procura recursivamente em subpastas
     for (const subFolder of subFolders) {
-      const result = await processFolderStructure(subFolder, currentSlug);
+      const result = await processFolderStructure(subFolder, currentSlug, onProgress);
       if (result) return result;
     }
 
@@ -83,7 +86,7 @@ function createSlug(name: string): string {
     .replace(/-+$/, '');
 }
 
-async function saveToRedis(folder: FolderStructure) {
+async function saveToRedis(folder: FolderStructure, onProgress?: OnProgress) {
   try {
     // Salva a estrutura usando o slug como chave
     const folderKey = `folder:${folder.slug}`;
@@ -98,12 +101,14 @@ async function saveToRedis(folder: FolderStructure) {
     });
 
     console.log(`[crawler-SERVICE] Saved folder to Redis: ${folder.slug}`);
+    onProgress?.(`[crawler-SERVICE] Saved folder to Redis: ${folder.slug}`);
   } catch (err) {
     console.error(`[crawler-SERVICE] Redis save error for ${folder.slug}:`, err);
+    onProgress?.(`[crawler-SERVICE] Redis save error for ${folder.slug}: ${err}`,);
   }
 }
 
-export async function crawlerTheFolders() {
+export async function crawlerTheFolders(onProgress?: OnProgress) {
   try {
     const folderId = process.env.LINK_CLIENTES_FOLDER_ID;
     console.log('[crawler-SERVICE] start');
@@ -116,7 +121,7 @@ export async function crawlerTheFolders() {
     for (const parent of parentFolders) {
       if (!parent.id || parent.name?.toLowerCase() === 'web') continue;
 
-      await processFolderStructure(parent);
+      await processFolderStructure(parent, onProgress);
     }
 
     console.log('[crawler-SERVICE] Processed folders finished');
