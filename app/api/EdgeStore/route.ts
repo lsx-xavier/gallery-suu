@@ -28,10 +28,8 @@ const VERCEL_API_TOKEN = process.env.VERCEL_API_TOKEN || '';
 // }
 
 export async function POST(req: NextRequest) {
-  console.log("Initializing edge store")
   try {
     const requestBody = await req.json();
-    console.log('body', requestBody)
 
     const response = await fetch(`${BASE_URL}/${EDGE_CONFIG_KEY}/items`, {
       method: 'PATCH',
@@ -43,6 +41,8 @@ export async function POST(req: NextRequest) {
     });
 
     if (!response.ok) {
+      const errorDetails = await response.text(); // Captura o corpo de erro, caso exista
+      console.error('Failed to update Edge Config:', errorDetails);
       throw new Error('Failed to update Edge Config');
     }
 

@@ -36,7 +36,7 @@ export async function getFoldersByIdOrQuery(
     fields = "files(id, name)",
     resParams
   }: GetFoldersByIdOrQueryProps) {
-  console.log('[getFoldersByIdOrQuery] start', folderId, query);
+
 
   if (!query) {
     if (!folderId) {
@@ -57,7 +57,7 @@ export async function getFoldersByIdOrQuery(
   }
 
   const queryString = query ?? `'${folderId}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`;
-  console.log('[getFoldersByIdOrQuery] queryString', queryString);
+
 
   const files = await drive.files.list({
     q: queryString,

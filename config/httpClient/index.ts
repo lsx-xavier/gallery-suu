@@ -2,6 +2,7 @@
 import request, { SuperAgentRequest } from 'superagent';
 import { DefaultHttpsDTO, HttpsGetDTO, HttpsMethods, HttpsPostPutDTO } from './type';
 
+
 const apiBaseUrl = process.env.API_BASE_URL || "https://localhost:3000/api"
 type TypedResponse<T> = Response & { body: T };
 
@@ -21,6 +22,7 @@ async function baseRequest<T>(
   moreOptions?: (req: SuperAgentRequest) => SuperAgentRequest
 ): Promise<TypedResponse<T> | null> {
   try {
+    console.log('[FETCHING] Start', new Date().toISOString());
     let req: SuperAgentRequest = request[method](`${apiBaseUrl}${url}`)
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json');
@@ -34,11 +36,11 @@ async function baseRequest<T>(
     else if (data) req.send(data);
 
     // Log da requisição (debug)
-    console.debug(`[${method.toUpperCase()} (Before execute)] ${apiBaseUrl}${url}`, data || '');
+    // console.debug(`[${method.toUpperCase()} (Before execute)] ${apiBaseUrl}${url}`, data || '');
 
     const res = await req;
 
-    console.debug(`[${method.toUpperCase()} (After execute)] ${apiBaseUrl}${url}`, data || '');
+    // console.debug(`[${method.toUpperCase()} (After execute)] ${apiBaseUrl}${url}`, data || '');
 
     if(!res) {
       throw {
@@ -46,13 +48,14 @@ async function baseRequest<T>(
         code: 500
       }
     }
-    console.debug(`[${method.toUpperCase()} (After Response)] ${apiBaseUrl}${url}`, data || '');
+    // console.debug(`[${method.toUpperCase()} (After Response)] ${apiBaseUrl}${url}`, data || '');
 
     const finalRes = await res.body as unknown as TypedResponse<T>
-    console.debug(`[${method.toUpperCase()} (After Get Response)] ${apiBaseUrl}${url}`, data || '');
-    
+    // console.debug(`[${method.toUpperCase()} (After Get Response)] ${apiBaseUrl}${url}`, data || '');
+    console.log('[FETCHING] End', new Date().toISOString());
     return finalRes;
   } catch (err) {
+    console.log('[FETCHING] Error', new Date().toISOString());
     handleHttpError(err);
 
     return null;

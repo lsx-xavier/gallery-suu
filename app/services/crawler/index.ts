@@ -1,128 +1,127 @@
 import { getFoldersByIdOrQuery } from "@/config/apis/google";
-import httpClient from "@/config/httpClient";
+import { redis } from "@/config/redis";
 import { drive_v3 } from "googleapis";
 
-
-export type FoldersDto = {
+type FolderStructure = {
   id: string;
   name: string;
-  childs?: FoldersDto
-}[]
+  hasImages: boolean;
+  webFolderId?: string;
+  slug: string;
+  parentSlug?: string;
+}
+
+async function processFolderStructure(
+  folder: drive_v3.Schema$File,
+  parentSlug?: string
+): Promise<FolderStructure | null> {
+  try {
+    const currentSlug = createSlug(folder.name!);
+
+    const subItems = await getFoldersByIdOrQuery({
+      query: `'${folder.id}' in parents and (mimeType = 'application/vnd.google-apps.folder' or mimeType contains 'image/') and trashed = false`,
+      fields: 'files(id, name, mimeType)',
+      resParams: { pageSize: 1000 }
+    });
+
+    const webFolder = subItems.find(i => i.name?.toLowerCase() === 'web');
+    const hasImages = subItems.some(i => i.mimeType?.startsWith("image/"));
+    const subFolders = subItems.filter(i =>
+      i.mimeType === "application/vnd.google-apps.folder" &&
+      i.name?.toLowerCase() !== 'alta'
+    );
+
+    // Se encontrou pasta WEB
+    if (webFolder) {
+      const folderStructure = {
+        id: folder.id!,
+        name: folder.name!,
+        hasImages: true,
+        webFolderId: webFolder.id!,
+        slug: currentSlug,
+        parentSlug
+      };
+
+      await saveToRedis(folderStructure);
+      return folderStructure;
+    }
+
+    // Se tem imagens diretas
+    if (hasImages) {
+      const folderStructure = {
+        id: folder.id!,
+        name: folder.name!,
+        hasImages: true,
+        slug: currentSlug,
+        parentSlug
+      };
+
+      await saveToRedis(folderStructure);
+      return folderStructure;
+    }
+
+    // Procura recursivamente em subpastas
+    for (const subFolder of subFolders) {
+      const result = await processFolderStructure(subFolder, currentSlug);
+      if (result) return result;
+    }
+
+    return null;
+  } catch (err) {
+    console.error(`Error processing folder ${folder.id}:`, err);
+    return null;
+  }
+}
+
+function createSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w\-]+/g, '')
+    .replace(/\-\-+/g, '-')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '');
+}
+
+async function saveToRedis(folder: FolderStructure) {
+  try {
+    // Salva a estrutura usando o slug como chave
+    const folderKey = `folder:${folder.slug}`;
+
+    await redis.hset(folderKey, {
+      id: folder.id,
+      name: folder.name,
+      hasImages: folder.hasImages ? '1' : '0',
+      webFolderId: folder.webFolderId || '',
+      slug: folder.slug,
+      parentSlug: folder.parentSlug || ''
+    });
+
+    console.log(`[crawler-SERVICE] Saved folder to Redis: ${folder.slug}`);
+  } catch (err) {
+    console.error(`[crawler-SERVICE] Redis save error for ${folder.slug}:`, err);
+  }
+}
 
 export async function crawlerTheFolders() {
   try {
-    const folderId = process.env.LINK_CLIENTES_FOLDER_ID
-    console.log('[crawler-SERVICE] start', folderId)
+    const folderId = process.env.LINK_CLIENTES_FOLDER_ID;
+    console.log('[crawler-SERVICE] start');
 
     const parentFolders = await getFoldersByIdOrQuery({
-      folderId: folderId!
+      folderId: folderId!,
+      fields: 'files(id, name, mimeType)'
     });
 
-    console.log('[crawler-SERVICE] parentFolders', parentFolders)
-
-    const folders = [];
-    async function findWebFolderOrImage(folder: drive_v3.Schema$File) {
-      const hierarchy: { id: string, name: string, childs: drive_v3.Schema$File[] } = {
-        id: folder.id!,
-        name: folder.name!,
-        childs: []
-      };
-
-      try {
-        const maybeFinded = await getFoldersByIdOrQuery({
-          query: `'${folder.id}' in parents and (mimeType = 'application/vnd.google-apps.folder' or mimeType contains 'image/') and trashed = false`,
-          fields: 'files(id, name, mimeType)'
-        })
-
-
-        const findTheWebFolder = maybeFinded.find(i => i.name?.toLowerCase() === 'web');
-        if (findTheWebFolder) {
-          hierarchy.childs.push({
-            id: findTheWebFolder.id,
-            name: findTheWebFolder.name
-          });
-
-          return hierarchy;
-        }
-
-        const findTheImageFolder = maybeFinded.find(i => i.mimeType?.startsWith("image/"))
-        if (findTheImageFolder) {
-          return hierarchy;
-        }
-
-        for (const maybe of maybeFinded.filter(i => i.mimeType === "application/vnd.google-apps.folder")) {
-          if (!maybe.id) continue;
-
-          const found = await findWebFolderOrImage(maybe);
-
-          if (found) {
-            hierarchy.childs.push(found);
-          }
-        }
-
-        return hierarchy
-      } catch (err) {
-        throw {
-          message: err,
-          status: 404
-        }
-      }
-    }
-
     for (const parent of parentFolders) {
-      if (parent.name?.toLowerCase() === 'web') {
-        folders.push({
-          id: parent.id,
-          name: parent.name,
-        })
-        continue;
-      }
+      if (!parent.id || parent.name?.toLowerCase() === 'web') continue;
 
-      if (!parent.id) continue;
-
-      const finded = await findWebFolderOrImage(parent)
-
-      folders.push(finded)
+      await processFolderStructure(parent);
     }
-    
-    try {
-      const jsonData = JSON.stringify(folders, null, 2);
-      // const jsonData = JSON.stringify({ teste: 'teste' }, null, 2);
 
-      const response = await httpClient.post({
-        url: '/EdgeStore',
-        body: {
-          items: [
-            {
-              operation: "upsert",
-              key: "drive_structure",
-              value: jsonData
-            }
-          ]
-        }
-      });
-
-      console.log('response', response)
-
-      return response;
-
-      // // Compacta o JSON usando Gzip
-      // const compressedData = zlib.gzipSync(jsonData);
-
-      // const filePath = path.join(process.cwd(), "public", "drive_structure.gzip");
-      // fs.writeFileSync(filePath, compressedData, 'binary');
-    } catch(err) {
-      const error = err as {
-        body: string;
-        status: number | string;
-      };
-
-      throw {
-        message: `[crawler-SERVICE] Error of edge on crawler: ${error?.body}`,
-        code: error?.status || 500
-      }
-    }
+    console.log('[crawler-SERVICE] Processed folders finished');
   } catch(error) {
-    throw error
+    console.error('[crawler-SERVICE] Error:', error);
+    throw error;
   }
 }
