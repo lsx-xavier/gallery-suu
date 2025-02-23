@@ -100,6 +100,11 @@ async function saveToRedis(folder: FolderStructure, onProgress?: OnProgress) {
       parentSlug: folder.parentSlug || ''
     });
 
+    await redis.hset('crawler:status', {
+      lastFolder: folder.name,
+      timestamp: new Date().toISOString()
+    });
+
     console.log(`[crawler-SERVICE] Saved folder to Redis: ${folder.slug}`);
     onProgress?.(`[crawler-SERVICE] Saved folder to Redis: ${folder.slug}`);
   } catch (err) {
