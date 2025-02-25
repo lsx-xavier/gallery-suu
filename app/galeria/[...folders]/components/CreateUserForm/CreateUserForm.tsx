@@ -41,7 +41,8 @@ export function FormCreateUser({ params }: FormCreateUserProps) {
     }
 
     try {
-      const response = await httpClient.post<string>({
+      // TODO: Pegar o response e mostrar na tela
+      await httpClient.post<string>({
         url: `/create-user-to-folder`, body: {
           folderName: folders?.[0],
           user,
@@ -49,7 +50,6 @@ export function FormCreateUser({ params }: FormCreateUserProps) {
         }
       });
 
-      // TODO: Pegar o response e mostrar na tela
       setInfo({
         isError: false,
         text: 'Conta criada, pode passar para o cliente!',
