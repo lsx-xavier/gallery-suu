@@ -49,9 +49,10 @@ export function FormCreateUser({ params }: FormCreateUserProps) {
         }
       });
 
+      // TODO: Pegar o response e mostrar na tela
       setInfo({
         isError: false,
-        text: response?.body || "Erro ao criar usuário!",
+        text: 'Conta criada, pode passar para o cliente!',
       });
 
       setUser(undefined);
