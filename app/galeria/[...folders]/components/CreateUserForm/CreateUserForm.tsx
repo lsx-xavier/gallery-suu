@@ -1,4 +1,5 @@
 'use client'
+import httpClient from '@/config/httpClient';
 import { redirect } from 'next/navigation';
 import React, { FormEvent, useCallback, useState } from 'react';
 
@@ -9,12 +10,12 @@ type FormCreateUserProps = {
 }
 
 
-export function FormCreateUser({params}: FormCreateUserProps) {
+export function FormCreateUser({ params }: FormCreateUserProps) {
   const { folders } = React.use(params);
 
-  const [user,setUser] = useState<string>()
-  const [pass,setPass] = useState<string>()
-  const [admin,setAdmin] = useState<string>()
+  const [user, setUser] = useState<string>()
+  const [pass, setPass] = useState<string>()
+  const [admin, setAdmin] = useState<string>()
   const [info, setInfo] = useState<{
     isError: boolean;
     text: string;
@@ -22,8 +23,8 @@ export function FormCreateUser({params}: FormCreateUserProps) {
 
   const handleSubmit = useCallback(async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
-    if(!admin || admin !== "suuk1221@") {
+
+    if (!admin || admin !== "suuk1221@") {
       setInfo({
         isError: true,
         text: "Senha de segurança errada!",
@@ -31,7 +32,7 @@ export function FormCreateUser({params}: FormCreateUserProps) {
       return;
     }
 
-    if((!user || user === "") || (!pass || pass === "")) {
+    if ((!user || user === "") || (!pass || pass === "")) {
       setInfo({
         isError: true,
         text: "Preencha o formulário!",
@@ -40,21 +41,17 @@ export function FormCreateUser({params}: FormCreateUserProps) {
     }
 
     try {
-      await fetch(`/api/create-user-to-folder`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      const response = await httpClient.post<string>({
+        url: `/create-user-to-folder`, body: {
           folderName: folders?.[0],
           user,
           pass
-        }),
+        }
       });
-  
+
       setInfo({
         isError: false,
-        text: "Conta criada, pode passar para o cliente!",
+        text: response?.body || "Erro ao criar usuário!",
       });
 
       setUser(undefined);
@@ -66,9 +63,7 @@ export function FormCreateUser({params}: FormCreateUserProps) {
         text: `Algum erro aconteceu! Pede para o seu amor ver. Erro: ${error}`,
       });
     }
-
-
-  },[admin, user, pass, folders])
+  }, [admin, user, pass, folders])
 
   if (info) {
     return (
@@ -77,7 +72,7 @@ export function FormCreateUser({params}: FormCreateUserProps) {
         <div className='flex flex-col gap-4'>
           {info.text}
 
-          {!info.isError && <div  className='flex gap-4 justify-end'>
+          {!info.isError && <div className='flex gap-4 justify-end'>
             <button type="button" onClick={() => setInfo(undefined)} className="border border-white bg-transparent rounded-md py-3 hover:bg-white/30 p-3">
               Fechar
             </button>
@@ -88,7 +83,7 @@ export function FormCreateUser({params}: FormCreateUserProps) {
           </div>}
         </div>
       </div>
-      );
+    );
   }
 
   return (
@@ -98,8 +93,8 @@ export function FormCreateUser({params}: FormCreateUserProps) {
       <form onSubmit={handleSubmit} className='flex flex-col gap-6'>
         <div className='flex flex-col gap-2'>
           <div className='flex gap-2'>
-            <input className='border border-zinc-800 bg-transparent rounded-md p-2 text-white placeholder-white' placeholder='Usuário' type='text' name="user"  onChange={(e) => setUser(e.target.value)} />
-            <input className='border border-zinc-800 bg-transparent rounded-md p-2 text-white placeholder-white' placeholder='Senha' type='password' name='pass'  onChange={(e) => setPass(e.target.value)} />
+            <input className='border border-zinc-800 bg-transparent rounded-md p-2 text-white placeholder-white' placeholder='Usuário' type='text' name="user" onChange={(e) => setUser(e.target.value)} />
+            <input className='border border-zinc-800 bg-transparent rounded-md p-2 text-white placeholder-white' placeholder='Senha' type='password' name='pass' onChange={(e) => setPass(e.target.value)} />
           </div>
           <input className='border border-zinc-800 bg-transparent rounded-md p-2 text-white placeholder-white' placeholder='Senha Admin' type='password' name='adminPass' onChange={(e) => setAdmin(e.target.value)} />
         </div>

@@ -1,6 +1,6 @@
 import { drive_v3, google } from 'googleapis';
 
-export async function GoogleAuthApi () {
+export async function GoogleAuthApi() {
   const googleKey = process.env.GOOGLE_KEY_BASE64 as string;
   const credentials = JSON.parse(Buffer.from(googleKey, 'base64').toString());
 
@@ -23,7 +23,7 @@ export const googleApi = google;
 export async function driveWithAuth() {
   const auth = await GoogleAuthApi();
   const drive = googleApi.drive({ version: "v3", auth });
-  
+
   return drive;
 };
 
@@ -45,7 +45,7 @@ export async function getFoldersByIdOrQuery(
         status: 500
       }
     };
-  } 
+  }
 
   const drive = await driveWithAuth();
 
@@ -64,7 +64,6 @@ export async function getFoldersByIdOrQuery(
     fields: fields,
     ...resParams
   }).then((res) => {
-
     if (!res) {
       console.error('Didn\'t get response from the drive list');
       return [];
