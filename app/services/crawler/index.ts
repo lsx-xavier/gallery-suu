@@ -1,17 +1,8 @@
 import { getFoldersByIdOrQuery } from "@/config/apis/google";
-import { redis } from "@/config/redis";
+import { createSlug } from "@/utils/create-slug";
 import { drive_v3 } from "googleapis";
-
-type FolderStructure = {
-  id: string;
-  name: string;
-  hasImages: boolean;
-  webFolderId?: string;
-  slug: string;
-  parentSlug?: string;
-}
-
-type OnProgress = (message: string) => void;
+import { saveToRedis } from "../save-to-redis";
+import { FolderStructure, OnProgress } from "./types";
 
 async function processFolderStructure(
   folder: drive_v3.Schema$File,
@@ -42,7 +33,7 @@ async function processFolderStructure(
         hasImages: true,
         webFolderId: webFolder.id!,
         slug: currentSlug,
-        parentSlug
+        ...{ parentSlug }
       };
 
       await saveToRedis(folderStructure, onProgress);
@@ -56,7 +47,7 @@ async function processFolderStructure(
         name: folder.name!,
         hasImages: true,
         slug: currentSlug,
-        parentSlug
+        ...{ parentSlug }
       };
 
       await saveToRedis(folderStructure, onProgress);
@@ -76,43 +67,6 @@ async function processFolderStructure(
   }
 }
 
-function createSlug(name: string): string {
-  return name
-    .toLowerCase()
-    .replace(/\s+/g, '-')
-    .replace(/[^\w\-]+/g, '')
-    .replace(/\-\-+/g, '-')
-    .replace(/^-+/, '')
-    .replace(/-+$/, '');
-}
-
-async function saveToRedis(folder: FolderStructure, onProgress?: OnProgress) {
-  try {
-    // Salva a estrutura usando o slug como chave
-    const folderKey = `folder:${folder.slug}`;
-
-    await redis.hset(folderKey, {
-      id: folder.id,
-      name: folder.name,
-      hasImages: folder.hasImages ? '1' : '0',
-      webFolderId: folder.webFolderId || '',
-      slug: folder.slug,
-      parentSlug: folder.parentSlug || ''
-    });
-
-    await redis.hset('crawler:status', {
-      lastFolder: folder.name,
-      timestamp: new Date().toISOString()
-    });
-
-    console.log(`[crawler-SERVICE] Saved folder to Redis: ${folder.slug}`);
-    onProgress?.(`[crawler-SERVICE] Saved folder to Redis: ${folder.slug}`);
-  } catch (err) {
-    console.error(`[crawler-SERVICE] Redis save error for ${folder.slug}:`, err);
-    onProgress?.(`[crawler-SERVICE] Redis save error for ${folder.slug}: ${err}`,);
-  }
-}
-
 export async function crawlerTheFolders(onProgress?: OnProgress) {
   try {
     const folderId = process.env.LINK_CLIENTES_FOLDER_ID;
@@ -120,17 +74,18 @@ export async function crawlerTheFolders(onProgress?: OnProgress) {
 
     const parentFolders = await getFoldersByIdOrQuery({
       folderId: folderId!,
-      fields: 'files(id, name, mimeType)'
+      fields: 'files(id, name, mimeType)',
+      resParams: { pageSize: 1000 }
     });
 
     for (const parent of parentFolders) {
       if (!parent.id || parent.name?.toLowerCase() === 'web') continue;
 
-      await processFolderStructure(parent, onProgress);
+      await processFolderStructure(parent, undefined, onProgress);
     }
 
     console.log('[crawler-SERVICE] Processed folders finished');
-  } catch(error) {
+  } catch (error) {
     console.error('[crawler-SERVICE] Error:', error);
     throw error;
   }
