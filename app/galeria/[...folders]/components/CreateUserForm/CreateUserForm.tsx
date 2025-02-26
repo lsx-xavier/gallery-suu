@@ -1,17 +1,15 @@
 'use client'
 import httpClient from '@/config/httpClient';
 import { redirect } from 'next/navigation';
-import React, { FormEvent, useCallback, useState } from 'react';
+import { FormEvent, useCallback, useState } from 'react';
 
 type FormCreateUserProps = {
-  params: Promise<{
-    folders: string[]
-  }>
+  folders: string[];
 }
 
 
-export function FormCreateUser({ params }: FormCreateUserProps) {
-  const { folders } = React.use(params);
+export function FormCreateUser({ folders }: FormCreateUserProps) {
+
 
   const [user, setUser] = useState<string>()
   const [pass, setPass] = useState<string>()

@@ -10,11 +10,12 @@ export async function POST(req: NextRequest) {
       status: 200,
     })
 
-    const time = 60 * 3 * 1 * 1 // seg * min * horas * dias
+    // 2 dias em segundos (seg * min * horas * dias)
+    const time = 60 * 60 * 24 * 2
 
     response.headers.append(
       "Set-Cookie",
-      `userToken=${data}; Path=/galeria; HttpOnly; Secure; SameSite=Strict; Max-Age=${time}` 
+      `suuAuth=${data.message}; Path=/galeria; HttpOnly; Secure; SameSite=Strict; Max-Age=${time}`
     )
 
     return response;

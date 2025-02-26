@@ -1,3 +1,4 @@
+'use server'
 import { headers } from "next/headers";
 
 /**
@@ -7,10 +8,16 @@ import { headers } from "next/headers";
 
 export async function getTokenCookie() {
   const headersList = await headers();
-  const token = headersList.get("cookie");
-  if(!token?.includes('userToken')) return undefined;
-  
-  const tokenSplit = token?.slice(token.indexOf("userToken") + 2, token.indexOf(';'))
+  const cookieHeader = headersList.get("cookie");
 
-  return tokenSplit
+  if (!cookieHeader?.includes('suuAuth')) return undefined;
+
+  // Divide todos os cookies e procura pelo suuAuth
+  const cookies = cookieHeader.split(';').reduce<Record<string, string>>((acc, cookie) => {
+    const [key, value] = cookie.trim().split('=');
+    acc[key] = value;
+    return acc;
+  }, {});
+
+  return cookies['suuAuth'];
 }
