@@ -1,4 +1,4 @@
-import { getFolderIdImage } from "@/app/services/get-folder-id-image";
+import { getFolderIdImage } from "@/app/services/_olds/get-folder-id-image";
 import { NextRequest, NextResponse } from "next/server";
 
 

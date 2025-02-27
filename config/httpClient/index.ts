@@ -8,10 +8,10 @@ type TypedResponse<T> = Response & { body: T };
 
 // Configuração principal do Superagent
 const httpClient = {
-  get: <T>({  url, params, moreOptions }: HttpsGetDTO) => baseRequest<T>( 'get', url, params, moreOptions ),
-  post: <T>({  url, body, moreOptions }: HttpsPostPutDTO) => baseRequest<T>( 'post', url, body, moreOptions ),
-  put: <T>({  url, body, moreOptions }: HttpsPostPutDTO) => baseRequest<T>( 'put', url, body, moreOptions ),
-  delete: <T>({  url, moreOptions }: DefaultHttpsDTO) => baseRequest<T>( 'delete', url, moreOptions ),
+  get: <T>({ url, params, moreOptions }: HttpsGetDTO) => baseRequest<T>('get', url, params, moreOptions),
+  post: <T>({ url, body, moreOptions }: HttpsPostPutDTO) => baseRequest<T>('post', url, body, moreOptions),
+  put: <T>({ url, body, moreOptions }: HttpsPostPutDTO) => baseRequest<T>('put', url, body, moreOptions),
+  delete: <T>({ url, moreOptions }: DefaultHttpsDTO) => baseRequest<T>('delete', url, moreOptions),
 };
 
 // Função base para requisições
@@ -20,16 +20,16 @@ async function baseRequest<T>(
   url: string,
   data?: any,
   moreOptions?: (req: SuperAgentRequest) => SuperAgentRequest
-): Promise<TypedResponse<T> | null> {
+): Promise<T | null> {
   try {
     console.log('[FETCHING] Start', new Date().toISOString());
     let req: SuperAgentRequest = request[method](`${apiBaseUrl}${url}`)
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json');
 
-      if(moreOptions) {
-        req = moreOptions(req)
-      }
+    if (moreOptions) {
+      req = moreOptions(req)
+    }
 
     // Adiciona dados conforme o método da requisição
     if (method === 'get' && data) req.query(data);
@@ -42,7 +42,7 @@ async function baseRequest<T>(
 
     // console.debug(`[${method.toUpperCase()} (After execute)] ${apiBaseUrl}${url}`, data || '');
 
-    if(!res) {
+    if (!res) {
       throw {
         body: "Any response recived.",
         code: 500
@@ -50,7 +50,7 @@ async function baseRequest<T>(
     }
     // console.debug(`[${method.toUpperCase()} (After Response)] ${apiBaseUrl}${url}`, data || '');
 
-    const finalRes = await res.body as unknown as TypedResponse<T>
+    const finalRes = await res.body as unknown as T
     // console.debug(`[${method.toUpperCase()} (After Get Response)] ${apiBaseUrl}${url}`, data || '');
     console.log('[FETCHING] End', new Date().toISOString());
     return finalRes;

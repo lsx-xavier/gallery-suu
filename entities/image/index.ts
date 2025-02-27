@@ -2,6 +2,11 @@ export interface ImageDto {
   id: string;
   name: string;
   webContentLink: string;
-  
-  mimeType?: string;
+  webViewLink: string;
+
+  imageMediaMetadata?: {
+    width: string,
+    height: string,
+    rotation: string,
+  };
 }

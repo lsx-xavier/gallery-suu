@@ -1,4 +1,4 @@
-import getImages from "@/app/services/get-images";
+import getImages from "@/app/services/_olds/get-images";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
@@ -15,7 +15,7 @@ export async function GET(req: Request) {
       "Content-Type": "application/json",
       "Cache-Control": "s-maxage=60, stale-while-revalidate=600",
     });
-    
+
     return NextResponse.json(response, {
       status: 200,
       headers

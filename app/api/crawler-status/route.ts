@@ -6,8 +6,9 @@ export async function GET() {
     const status = await redis.hgetall('crawler:status');
     const all = await redis.keys('folder:*');
     console.log({ all }, all.length)
+    console.log(all.find(i => i.includes('folder:keiti-e-diogo')))
 
-    return NextResponse.json({ status });
+    return NextResponse.json({ lastSaved: status, folders: all });
   } catch (err) {
     console.error('[crawler-SERVICE] Error getting status:', err);
     return null;
