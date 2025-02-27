@@ -42,7 +42,7 @@ export function FormCreateUser({ folders }: FormCreateUserProps) {
       // TODO: Pegar o response e mostrar na tela
       await httpClient.post<string>({
         url: `/create-user-to-folder`, body: {
-          folderName: folders?.[0],
+          folders,
           user,
           pass
         }

@@ -5,9 +5,9 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
   try {
     const body = await req.json()
-    const { folderName, user, pass } = body;
+    const { folders, user, pass } = body;
 
-    const response = await createUserToFolder(folderName, user, pass);
+    const response = await createUserToFolder(folders, user, pass);
 
     console.log('[create-user-to-folder] Response', response);
 

@@ -3,11 +3,13 @@ import { createSlug } from "@/utils/create-slug";
 import { hashPassword } from "@/utils/encrypt-decrypt";
 import { checkIfFolderExists } from "./helpers";
 
-export default async function createUserToFolder(folderName: string, user: string, pass: string) {
+export default async function createUserToFolder(folders: string[], user: string, pass: string) {
   try {
-    const currentFolderSlug = createSlug(folderName);
+    const foldersWithoutCreate = folders.filter(folder => folder !== 'create');
+    console.log({ foldersWithoutCreate })
+    const currentFolderSlug = createSlug(foldersWithoutCreate[foldersWithoutCreate.length - 1]);
 
-    const folderData = await checkIfFolderExists(currentFolderSlug, folderName);
+    const folderData = await checkIfFolderExists(foldersWithoutCreate);
 
     if (!folderData) {
       console.log('[create-user-to-folder] Folder not found');

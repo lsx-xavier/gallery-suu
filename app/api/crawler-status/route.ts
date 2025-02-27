@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
+    // await redis.flushall(); // just to reset the redis
+
     const status = await redis.hgetall('crawler:status');
     const all = await redis.keys('folder:*');
     console.log({ all }, all.length)
