@@ -1,5 +1,4 @@
 import { redis } from "@/config/redis";
-import { createSlug } from "@/utils/create-slug";
 import { hashPassword } from "@/utils/encrypt-decrypt";
 import { checkIfFolderExists } from "./helpers";
 
@@ -7,7 +6,7 @@ export default async function createUserToFolder(folders: string[], user: string
   try {
     const foldersWithoutCreate = folders.filter(folder => folder !== 'create');
     console.log({ foldersWithoutCreate })
-    const currentFolderSlug = createSlug(foldersWithoutCreate[foldersWithoutCreate.length - 1]);
+
 
     const folderData = await checkIfFolderExists(foldersWithoutCreate);
 
@@ -22,7 +21,8 @@ export default async function createUserToFolder(folders: string[], user: string
     const encryptPass = await hashPassword(pass);
     const acccountJson = { user: user, pass: encryptPass };
 
-    const redisAuthKey = `auth:${currentFolderSlug}`;
+    const redisAuthKey = `auth:${foldersWithoutCreate.join(':')}`;
+    console.log({ redisAuthKey })
     await redis.hset(redisAuthKey, acccountJson);
 
     await redis.hset('auth:status', {

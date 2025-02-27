@@ -2,14 +2,18 @@ import { getFoldersByIdOrQuery } from "@/config/apis/google";
 import { createSlug } from "@/utils/create-slug";
 import { drive_v3 } from "googleapis";
 import { saveToRedis } from "../save-to-redis";
-import { FolderStructure, OnProgress } from "./types";
+import { OnProgress } from "./types";
 
 export async function processFolderStructure(
   folder: drive_v3.Schema$File,
   parentSlug?: string,
   onProgress?: OnProgress
-): Promise<FolderStructure | null> {
+) {
   try {
+    if (folder.name?.toLowerCase() === 'web') {
+      return;
+    }
+
     const currentSlug = createSlug(folder.name!);
 
     const subItems = await getFoldersByIdOrQuery({
@@ -26,43 +30,32 @@ export async function processFolderStructure(
     );
 
     // Se encontrou pasta WEB
-    if (webFolder) {
+    if (webFolder || hasImages) {
+      const redisKey = parentSlug
+        ? `folder:${parentSlug}:${currentSlug}`
+        : `folder:${currentSlug}`;
+
       const folderStructure = {
         id: folder.id!,
         name: folder.name!,
-        hasImages: true,
-        webFolderId: webFolder.id!,
-        slug: currentSlug,
-        ...{ parentSlug }
+        hasImages: !!hasImages,
+        ...((webFolder && webFolder.id) && { webFolderId: webFolder.id }),
       };
 
-      await saveToRedis(folderStructure, onProgress);
-      return folderStructure;
-    }
+      await saveToRedis(redisKey, folderStructure, onProgress);
 
-    // Se tem imagens diretas
-    if (hasImages) {
-      const folderStructure = {
-        id: folder.id!,
-        name: folder.name!,
-        hasImages: true,
-        slug: currentSlug,
-        ...{ parentSlug }
-      };
-
-      await saveToRedis(folderStructure, onProgress);
-      return folderStructure;
     }
 
     // Procura recursivamente em subpastas
     for (const subFolder of subFolders) {
-      const result = await processFolderStructure(subFolder, currentSlug, onProgress);
-      if (result) return result;
+      await processFolderStructure(subFolder, currentSlug, onProgress);
     }
 
-    return null;
   } catch (err) {
     console.error(`Error processing folder ${folder.id}:`, err);
-    return null;
+    throw {
+      message: `Error processing crawler: ${err}`,
+      code: 'CRAWLER_ERROR'
+    };
   }
 }

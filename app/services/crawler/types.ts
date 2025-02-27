@@ -3,8 +3,6 @@ export type FolderStructure = {
   name: string;
   hasImages: boolean;
   webFolderId?: string;
-  slug: string;
-  parentSlug?: string;
 }
 
 export type OnProgress = (message: string) => void;
