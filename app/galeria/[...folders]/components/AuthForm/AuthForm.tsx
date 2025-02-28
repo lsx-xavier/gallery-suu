@@ -20,7 +20,7 @@ export function AuthForm({ folders, onSuccess }: AuthFormProps) {
         body: {
           user,
           pass,
-          folderName: folders?.[0]
+          folders
         }
       });
 

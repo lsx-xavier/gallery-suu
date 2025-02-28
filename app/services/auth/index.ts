@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { authToken } from "@/config/AuthToken";
 import { redis } from "@/config/redis";
-import { createSlug } from "@/utils/create-slug";
 import bcrypt from "bcryptjs";
 import { NextRequest } from "next/server";
 
@@ -9,11 +8,9 @@ import { NextRequest } from "next/server";
 export default async function auth(req: NextRequest) {
   try {
     console.log('[auth-SERVICE] start')
-    const { folderName, user, pass } = await req.json();
+    const { folders, user, pass } = await req.json();
 
-    const currentFolderSlug = createSlug(folderName);
-
-    const redisAuthKey = `auth:${currentFolderSlug}`;
+    const redisAuthKey = `auth:${folders.join(':')}`;
     const authData = await redis.hgetall(redisAuthKey);
 
     if (!authData) {
@@ -29,7 +26,10 @@ export default async function auth(req: NextRequest) {
     console.log('[auth-SERVICE] Finished')
 
     return {
-      message: authToken.generateToken({ user }),
+      message: {
+        folders,
+        authToken: authToken.generateToken({ user })
+      },
       code: 200
     }
 

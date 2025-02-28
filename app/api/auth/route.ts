@@ -4,10 +4,10 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
-    const data = await auth(req);
+    const { message, code } = await auth(req);
 
-    const response = NextResponse.json(data, {
-      status: 200,
+    const response = NextResponse.json(message, {
+      status: code,
     })
 
     // 2 dias em segundos (seg * min * horas * dias)
@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
 
     response.headers.append(
       "Set-Cookie",
-      `suuAuth=${data.message}; Path=/galeria; HttpOnly; Secure; SameSite=Strict; Max-Age=${time}`
+      `suuAuth=${message.authToken}; Path=/galeria/${message.folders.join('/')}; HttpOnly; Secure; SameSite=Strict; Max-Age=${time}`
     )
 
     return response;
