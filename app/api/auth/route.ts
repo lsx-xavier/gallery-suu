@@ -13,10 +13,21 @@ export async function POST(req: NextRequest) {
     // 2 dias em segundos (seg * min * horas * dias)
     const time = 60 * 60 * 24 * 2
 
+    const basePath = '/galeria';
+    const folderPath = message.folders.length > 0
+      ? `${basePath}/${message.folders.join('/')}`
+      : basePath;
+
+    // Log para debug
+    console.log('Setting cookie path:', folderPath);
+
     response.headers.append(
       "Set-Cookie",
-      `suuAuth=${message.authToken}; Path=/galeria/${message.folders.join('/')}; HttpOnly; Secure; SameSite=Strict; Max-Age=${time}`
+      `suuAuth=${message.authToken}; Path=${folderPath}; HttpOnly; Secure; SameSite=Strict; Max-Age=${time}`
     )
+
+    // Adiciona um header para debug
+    response.headers.append('X-Debug-Cookie-Path', folderPath);
 
     return response;
   } catch (error: any) {
