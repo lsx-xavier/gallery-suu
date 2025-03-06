@@ -23,7 +23,6 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-masonry-css": "^1.0.16",
-    "react-use-keypress": "^1.3.1",
     "superagent": "^10.1.1",
     "superagent-no-cache": "^0.1.1"
   },

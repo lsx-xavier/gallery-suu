@@ -4,10 +4,7 @@ import { CaretLeft, CaretRight, X } from '@phosphor-icons/react/dist/ssr';
 import * as Dialog from '@radix-ui/react-dialog';
 import { AnimatePresence, motion, MotionConfig } from 'framer-motion';
 import Image from 'next/image';
-import { useCallback, useState } from 'react';
-
-// @ts-expect-error - just to avoid type error
-import useKeypress from 'react-use-keypress';
+import { useCallback, useEffect, useState } from 'react';
 
 
 import { ImageDto } from '@/entities/image';
@@ -56,8 +53,18 @@ export default function Gallery({ listOfImages, currentImage: currentImageProps,
     [findIndexOfCurrentImage, listOfImages.length, hasNextImage, fetchNextImages, setTheCurrentImage]
   );
 
-  useKeypress('ArrowRight', nextImage);
-  useKeypress('ArrowLeft', prevImage);
+  useEffect(() => {
+    window.addEventListener('keydown', (e) => {
+      if(e.key === 'ArrowRight') {
+        nextImage();
+      }
+
+      if(e.key === 'ArrowLeft') {
+        prevImage();
+      }
+    })
+  }, [nextImage, prevImage])
+
 
   const filteredImages = listOfImages?.filter((img: ImageDto) =>
     range(findIndexOfCurrentImage - 15, findIndexOfCurrentImage + 15).includes(findIndexOfCurrentImage)
