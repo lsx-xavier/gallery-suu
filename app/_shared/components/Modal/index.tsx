@@ -1,10 +1,12 @@
 import { X } from '@phosphor-icons/react/dist/ssr';
 import * as Dialog from '@radix-ui/react-dialog';
+import React from 'react';
+import { Button } from '../Button';
 
 type ModalProps = {
   trigger: React.ReactNode;
   content: React.ReactNode;
-  title?: string;
+  title?: string | React.ReactNode;
   description?: string;
   whitCloseButton?: boolean;
 };
@@ -19,14 +21,17 @@ export default function Modal({
   return (
     <Dialog.Root>
       <Dialog.Trigger className="cursor-pointer">{trigger}</Dialog.Trigger>
+      
       <Dialog.Portal>
-        <div className="fixed left-0 top-0 size-full">
-          <Dialog.Overlay className="fixed inset-0 z-10 bg-[#0F1010] bg-opacity-85 backdrop-blur-[2px]" />
+          <Dialog.Overlay className="fixed inset-0 bg-[#0F1010] bg-opacity-85 backdrop-blur-[2px]" />
 
-          <Dialog.Content>
+          <Dialog.Content className='fixed inset-0'>
             {whitCloseButton && (
-              <Dialog.Close className="absolute right-2 top-2 z-20 rounded-full bg-[#0F1010] bg-opacity-75 p-2 hover:bg-opacity-100 [&>*]:hover:opacity-60">
-                <X className="text-2xl text-white" />
+              <Dialog.Close className="absolute right-2 top-2 rounded-full">
+                <Button className='!rounded-full'>
+                  <X className="text-2xl text-white" />
+                </Button>
+                
               </Dialog.Close>
             )}
 
@@ -38,7 +43,7 @@ export default function Modal({
 
             {content}
           </Dialog.Content>
-        </div>
+
       </Dialog.Portal>
     </Dialog.Root>
   );

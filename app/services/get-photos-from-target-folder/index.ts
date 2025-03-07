@@ -26,7 +26,7 @@ export default async function getPhotosFromTargetFolder(targetFolder: string | n
     const drive = await driveWithAuth();
     const { photos, nextPageToken } = await drive.files.list({
       q: `'${folderId}' in parents and mimeType contains 'image/'`,
-      fields: 'files(id, name, webViewLink, webContentLink, imageMediaMetadata), nextPageToken',
+      fields: 'files(id, name, webContentLink, imageMediaMetadata), nextPageToken',
       pageSize: limit,
       pageToken: nextPageTokenParam
     }).then((res) => {

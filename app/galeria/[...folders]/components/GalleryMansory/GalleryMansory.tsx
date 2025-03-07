@@ -1,10 +1,12 @@
 'use client'
+import { Button } from '@/app/_shared/components';
 import Modal from '@/app/_shared/components/Modal';
 import PortfolioGallery from '@/app/_shared/components/portfolio/portfolio-gallery';
 import httpClient from '@/config/httpClient';
 import { FolderRouterDto, TokenFolderPage } from '@/entities/folder';
 import { ImageDto } from '@/entities/image';
 import { ShimmerComponent, ShimmerImage } from '@/utils/ShimmerImage';
+import { DownloadSimple } from '@phosphor-icons/react/dist/ssr';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import Image from 'next/image';
 import { useCallback, useEffect, useState } from 'react';
@@ -14,6 +16,8 @@ export function GalleryMansory({ folders }: FolderRouterDto) {
   const [images, setImages] = useState<ImageDto[] | undefined>(undefined)
   const [nextPage, setNextPage] = useState<TokenFolderPage>(undefined)
   const [isFetching, setIsFetching] = useState(false)
+
+  console.log(images)
 
   const fetchImages = useCallback(async (nextPageProps?: TokenFolderPage) => {
     if (!folders) return;
@@ -82,9 +86,9 @@ export function GalleryMansory({ folders }: FolderRouterDto) {
 
   const titleOfModal = folders[0].replaceAll('-', ' ').replace(/\b\w/g, (char) => char.toUpperCase()) + ' - ' + folders[folders.length - 1].replaceAll('-', ' ').replace(/\b\w/g, (char) => char.toUpperCase()) ;
 
-  const handleNextPageOfImages = useCallback(() => {
+  const handleNextPageOfImages = useCallback(async () => {
     if(!isFetching && nextPage) {
-      fetchImages(nextPage)
+     await fetchImages(nextPage)
     }
   }, [fetchImages, nextPage, isFetching])
 
@@ -101,11 +105,17 @@ export function GalleryMansory({ folders }: FolderRouterDto) {
     >
       {rowVirtualizer.getVirtualItems().map((virtualRow) =>
         <div key={virtualRow.key} className='relative break-inside-avoid' >
-          {console.log(titleOfModal)}
           <Modal
             key={String(images[virtualRow.index]?.id)}
-            title={titleOfModal}
-            whitCloseButton={false}
+            title={
+              <div className='max-w-[50%] absolute top-2 left-1/2 -translate-x-1/2 flex justify-center items-center gap-2'>
+                <h3>{titleOfModal}</h3>
+                <Button className='flex items-center justify-center' size='sm' leftIcon={<DownloadSimple className='text-2xl' />}>
+                  Baixar foto
+                </Button>
+              </div>
+            }
+            whitCloseButton
             trigger={
               <Image
                 src={(images[virtualRow.index]?.webContentLink as string).replaceAll("=download", '=view')}
