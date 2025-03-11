@@ -90,8 +90,10 @@ export function GalleryMansory({ folders }: FolderRouterDto) {
     }
   }, [fetchImages, nextPage, isFetching])
 
+  const [isDownloading, setIsDownloading] = useState<"single" | "all" | undefined>(undefined)
   const handleDownloadPhoto = useCallback(async (photo?: ImageDto | undefined) => {
     try {
+      setIsDownloading(photo ? "single" : "all")
       const response = await httpClient.get<Blob>({
         url: "/download-photo",
         params: {
@@ -121,6 +123,8 @@ export function GalleryMansory({ folders }: FolderRouterDto) {
       URL.revokeObjectURL(fileUrl);
     } catch (error) {
       console.error('[download-photo - API] Error getting photos:', error);
+    } finally {
+      setIsDownloading(undefined)
     }
   }, [folders])
 
@@ -147,6 +151,7 @@ export function GalleryMansory({ folders }: FolderRouterDto) {
                   size='sm'
                   leftIcon={<DownloadSimple className='text-2xl' />}
                   onClick={() => handleDownloadPhoto(images[virtualRow.index])}
+                  isLoading={isDownloading === "single"}
                 >
                   Baixar foto
                 </Button>
@@ -155,6 +160,7 @@ export function GalleryMansory({ folders }: FolderRouterDto) {
                   size='sm'
                   leftIcon={<DownloadSimple className='text-2xl' />}
                   onClick={() => handleDownloadPhoto()}
+                  isLoading={isDownloading === "all"}
                 >
                   Baixar todas as foto
                 </Button>
