@@ -107,8 +107,6 @@ export function GalleryMansory({ folders }: FolderRouterDto) {
       if (!response) {
         throw new Error("Falha ao baixar o arquivo");
       }
-
-      console.log({response})
   
       // Cria um link temporário para o download
       const fileUrl= URL.createObjectURL(photo ? response : new Blob([response]))
