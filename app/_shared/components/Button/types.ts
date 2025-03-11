@@ -1,14 +1,9 @@
-import { ButtonHTMLAttributes, ReactNode } from "react";
+import { PropsWithChildren, ReactNode } from "react";
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'link';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
-export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  /**
-   * Conteúdo do botão
-   */
-  children: ReactNode;
-  
+type CommonProps = PropsWithChildren<{
   /**
    * Variante visual do botão
    * @default 'primary'
@@ -44,13 +39,29 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   rightIcon?: ReactNode;
   
   /**
-   * Estado desabilitado do botão
-   * @default false
-   */
-  disabled?: boolean;
-  
-  /**
    * Classes CSS adicionais
    */
   className?: string;
-}
+
+  /**
+   * Muda o component, adaptando para os tipos de clicaveis.
+   */
+  as?: "button" | "a"
+}>
+
+
+export type AsButton = CommonProps &
+  React.ButtonHTMLAttributes<HTMLButtonElement> & { disabled?: boolean };
+  
+  export type AsAnchor = CommonProps &
+  React.AnchorHTMLAttributes<HTMLAnchorElement> & {
+    disabled?: never;
+  };
+
+export type ButtonProps =
+  | ({
+      as?: "button";
+    } & AsButton)
+  | ({
+      as?: "a";
+    } & AsAnchor);

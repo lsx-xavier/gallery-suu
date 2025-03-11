@@ -1,7 +1,7 @@
 'use client';
 
 import { CaretLeft, CaretRight } from '@phosphor-icons/react/dist/ssr';
-import { AnimatePresence, motion, MotionConfig } from 'framer-motion';
+import { MotionConfig } from 'framer-motion';
 import Image from 'next/image';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -125,7 +125,7 @@ export default function Gallery({ listOfImages, currentImage: currentImageProps,
         )}
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 overflow-hidden">
+      {/* <div className="fixed inset-x-0 bottom-0 overflow-hidden">
         <motion.div
           initial={false}
           className="mx-auto my-6 flex aspect-[3/2] h-16"
@@ -179,7 +179,7 @@ export default function Gallery({ listOfImages, currentImage: currentImageProps,
             )}
           </AnimatePresence>
         </motion.div>
-      </div>
+      </div> */}
     </MotionConfig>
   );
 }

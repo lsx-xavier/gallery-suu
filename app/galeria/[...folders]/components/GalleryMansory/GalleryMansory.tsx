@@ -17,8 +17,6 @@ export function GalleryMansory({ folders }: FolderRouterDto) {
   const [nextPage, setNextPage] = useState<TokenFolderPage>(undefined)
   const [isFetching, setIsFetching] = useState(false)
 
-  console.log(images)
-
   const fetchImages = useCallback(async (nextPageProps?: TokenFolderPage) => {
     if (!folders) return;
     setIsFetching(true)
@@ -92,6 +90,42 @@ export function GalleryMansory({ folders }: FolderRouterDto) {
     }
   }, [fetchImages, nextPage, isFetching])
 
+  const handleDownloadPhoto = useCallback(async (photo?: ImageDto | undefined) => {
+    try {
+      const response = await httpClient.get<Blob>({
+        url: "/download-photo",
+        params: {
+          foldersName: JSON.stringify(folders),
+          photoId: photo?.id,
+        },
+        moreOptions: (req) => {
+          req.responseType('blob');
+          return req;
+        }
+      })
+  
+      if (!response) {
+        throw new Error("Falha ao baixar o arquivo");
+      }
+
+      console.log({response})
+  
+      // Cria um link temporário para o download
+      const fileUrl= URL.createObjectURL(photo ? response : new Blob([response]))
+      const a = document.createElement("a");
+      a.href = fileUrl;
+      a.download = photo?.id ? photo.name : `${folders.join(' - ')}.zip`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+  
+      // Libera memória
+      URL.revokeObjectURL(fileUrl);
+    } catch (error) {
+      console.error('[download-photo - API] Error getting photos:', error);
+    }
+  }, [folders])
+
   if (!images) return null;
 
   return (
@@ -110,8 +144,21 @@ export function GalleryMansory({ folders }: FolderRouterDto) {
             title={
               <div className='max-w-[50%] absolute top-2 left-1/2 -translate-x-1/2 flex justify-center items-center gap-2'>
                 <h3>{titleOfModal}</h3>
-                <Button className='flex items-center justify-center' size='sm' leftIcon={<DownloadSimple className='text-2xl' />}>
+                <Button
+                  className='flex items-center justify-center'
+                  size='sm'
+                  leftIcon={<DownloadSimple className='text-2xl' />}
+                  onClick={() => handleDownloadPhoto(images[virtualRow.index])}
+                >
                   Baixar foto
+                </Button>
+                <Button
+                  className='flex items-center justify-center'
+                  size='sm'
+                  leftIcon={<DownloadSimple className='text-2xl' />}
+                  onClick={() => handleDownloadPhoto()}
+                >
+                  Baixar todas as foto
                 </Button>
               </div>
             }

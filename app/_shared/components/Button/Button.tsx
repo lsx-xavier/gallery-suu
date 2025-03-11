@@ -1,17 +1,26 @@
+import Link from 'next/link';
+import { forwardRef } from 'react';
 import { ButtonProps } from './types';
 
-export function Button({
-  children,
-  variant = 'primary',
-  size = 'md',
-  fullWidth = false,
-  isLoading = false,
-  leftIcon,
-  rightIcon,
-  disabled,
-  className,
-  ...props
-}: ButtonProps) {
+export const Button = forwardRef<
+HTMLButtonElement | HTMLAnchorElement,
+ButtonProps
+>(
+  (
+    {
+      children,
+      variant = 'primary',
+      size = 'md',
+      fullWidth = false,
+      isLoading = false,
+      leftIcon,
+      rightIcon,
+      disabled,
+      className,
+      as = 'button',
+      ...props
+    }, ref
+  ) => {
   const baseClasses = 'inline-flex items-center justify-center rounded-md font-medium p-2';
   
   const variantClasses = {
@@ -27,9 +36,12 @@ export function Button({
     md: 'text-base',
     lg: 'text-lg'
   };
-  
+
+  const Component = as === 'a' ? Link : as;
+
   return (
-    <button
+    <Component
+      ref={ref}
       className={`
         ${baseClasses}
         ${variantClasses[variant]}
@@ -51,6 +63,8 @@ export function Button({
       {leftIcon && <span className="mr-2">{leftIcon}</span>}
       {children}
       {rightIcon && <span className="ml-2">{rightIcon}</span>}
-    </button>
+    </Component>
   );
-} 
+});
+
+Button.displayName = "Button";
