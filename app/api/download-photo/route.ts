@@ -1,4 +1,4 @@
-export const maxDuration = 50; // This function can run for a maximum of 5 seconds
+export const maxDuration = 50; // This function can run for a maximum of 50 seconds
 
 import { downloadImages } from "@/app/services/download-image";
 import { NextResponse } from "next/server";

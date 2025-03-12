@@ -1,3 +1,5 @@
+export const maxDuration = 50; // This function can run for a maximum of 50 seconds
+
 import getPhotosFromTargetFolder from "@/app/services/get-photos-from-target-folder";
 import { NextResponse } from "next/server";
 
