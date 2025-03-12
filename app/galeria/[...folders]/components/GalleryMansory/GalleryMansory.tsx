@@ -133,7 +133,7 @@ export function GalleryMansory({ folders }: FolderRouterDto) {
   return (
     <Masonry
       breakpointCols={breakpointColumns}
-      className="flex gap-4"
+      className="flex gap-4 p-5"
       columnClassName="flex flex-col gap-4"
       style={{
         height: rowVirtualizer.getTotalSize(), // Altura total da lista
@@ -144,7 +144,7 @@ export function GalleryMansory({ folders }: FolderRouterDto) {
           <Modal
             key={String(images[virtualRow.index]?.id)}
             title={
-              <div className='max-w-[50%] absolute top-2 left-1/2 -translate-x-1/2 flex justify-center items-center gap-2'>
+              <div className='max-w-[50%] absolute top-2 left-1/2 -translate-x-1/2 flex flex-col md:flex-row  justify-center items-center gap-2 z-10'>
                 <h3>{titleOfModal}</h3>
                 <Button
                   className='flex items-center justify-center'
