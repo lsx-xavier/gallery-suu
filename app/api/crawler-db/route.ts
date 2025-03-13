@@ -8,6 +8,10 @@ export async function GET() {
     console.log({ all }, all.length)
     console.log(all.find(i => i.includes('folder:keiti-e-diogo')))
 
+    const especifcFolder = await redis.hgetall('folder:keiti-e-diogo:natal-2023');
+
+    console.log({especifcFolder})
+
     return NextResponse.json({ lastSaved: status, folders: all });
   } catch (err) {
     console.error('[crawler-SERVICE] Error getting status:', err);

@@ -10,24 +10,25 @@ export async function POST(req: NextRequest) {
       status: code,
     })
 
-    // 2 dias em segundos (seg * min * horas * dias)
-    const time = 60 * 60 * 24 * 2
-
+    
+    
     const basePath = '/galeria';
     const folderPath = message.folders.length > 0
-      ? `${basePath}/${message.folders.join('/')}`
-      : basePath;
-
-    // Log para debug
-    console.log('Setting cookie path:', folderPath);
+    ? `${basePath}/${message.folders.join('/')}`
+    : basePath;
+    
+    const cookiePath = message.isAdmin ? basePath : folderPath;
+    
+    // segundos (seg * min * horas * dias) (admin 7 dias | user 2 dias)
+    const time =  60 * 60 * 24 * (message.isAdmin ? 7 : 2)
 
     response.headers.append(
       "Set-Cookie",
-      `suuAuth=${message.authToken}; Path=${folderPath}; HttpOnly; Secure; SameSite=Strict; Max-Age=${time}`
+      `suuAuth=${message.authToken}; Path=${cookiePath}; HttpOnly; Secure; SameSite=Strict; Max-Age=${time}`
     )
 
     // Adiciona um header para debug
-    response.headers.append('X-Debug-Cookie-Path', folderPath);
+    response.headers.append('X-Debug-Cookie-Path', cookiePath);
 
     return response;
   } catch (error: any) {

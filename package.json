@@ -20,6 +20,7 @@
     "googleapis": "^144.0.0",
     "jsonwebtoken": "^9.0.2",
     "jszip": "^3.10.1",
+    "mongodb": "^6.14.2",
     "next": "15.1.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
