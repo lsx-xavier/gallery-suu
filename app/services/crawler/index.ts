@@ -1,6 +1,7 @@
 import { getFoldersByIdOrQuery } from "@/config/apis/google";
-import { processFolderStructure } from "./helper";
-import { OnProgress } from "./types";
+import { createSlug } from "@/utils/create-slug";
+import { maybeSaveToMongoDb, processFolderStructure } from "./helper";
+import { FolderStructure, OnProgress } from "./types";
 
 export async function crawlerTheFolders(onProgress?: OnProgress) {
   try {
@@ -12,12 +13,16 @@ export async function crawlerTheFolders(onProgress?: OnProgress) {
       fields: 'files(id, name, mimeType)',
       resParams: { pageSize: 1000 }
     });
+    const allFolders: FolderStructure[] = [];
 
     for (const parent of parentFolders) {
       if (!parent.id || parent.name?.toLowerCase() === 'web') continue;
+      const parentSlug = createSlug(parent.name!);
 
-      await processFolderStructure(parent, undefined, onProgress);
+      await processFolderStructure(parent, parentSlug, parent.name!, parent.id, onProgress, allFolders);
     }
+
+    await maybeSaveToMongoDb({ foldersData: allFolders, onProgress });
 
     console.log('[crawler-SERVICE] Processed folders finished');
   } catch (error) {

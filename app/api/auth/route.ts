@@ -10,8 +10,6 @@ export async function POST(req: NextRequest) {
       status: code,
     })
 
-    
-    
     const basePath = '/galeria';
     const folderPath = message.folders.length > 0
     ? `${basePath}/${message.folders.join('/')}`
@@ -32,6 +30,7 @@ export async function POST(req: NextRequest) {
 
     return response;
   } catch (error: any) {
-    return NextResponse.json({ message: error.body }, { status: error.code });
+    console.log('error', error);
+    return NextResponse.json({ message: error.message }, { status: error.code });
   }
 }

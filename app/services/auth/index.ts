@@ -1,17 +1,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { authToken } from "@/config/AuthToken";
-import { mongodb } from "@/config/mongoDB";
+import prisma from "@/config/primsa";
 import { comparePassword } from "@/utils/encrypt-decrypt";
 import { NextRequest } from "next/server";
 
 
-export default async function auth(req: NextRequest) {
+export default async function auth(req: NextRequest): Promise<{ message: any, code: number }> {
   try {
     console.log('[auth-SERVICE] start')
     const { folders, user, pass } = await req.json();
 
-    const getCollection =  mongodb().collection("users");
-    const getUser = await getCollection.findOne({ userName: user });
+    if(!user || !pass) {
+      throw { message: "User or password is incorrect.", code: 401 };
+    }
+
+    const getUser = await prisma.users.findFirst(
+      {
+        where: {
+          userName: user,
+        }
+      }
+    );
 
     if (!getUser) {
       throw { message: "User not found.", code: 404 };
@@ -23,11 +32,12 @@ export default async function auth(req: NextRequest) {
     }
 
     if(getUser.role !== 'ADMIN') {
-      const getFoldersCollection = mongodb().collection("folders");
-      const getFolders = await getFoldersCollection.findOne({
-        usersIds: { $in: [getUser._id] },
-        slugFolder:  folders[folders.length - 1],
-        slugParent:  folders[0]
+      const getFolders = await prisma.folder.findFirst({
+        where: {
+          usersIds: { has: getUser.id },
+          slugFolder:  folders[folders.length - 1],
+          slugParent:  folders[0]
+        }
       });
 
       if(!getFolders) {
