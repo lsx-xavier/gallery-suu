@@ -81,6 +81,7 @@ export async function processFolderStructure(
       resParams: { pageSize: 1000 },
     });
 
+    // TODO: Verificar se a pasta web existe e se existe, adicionar o id da pasta web no folderIdOfPhotos
     const webFolder = subItems.find((i) => i.name?.toLowerCase() === 'web');
     const hasImages = subItems.find((i) => i.mimeType?.startsWith('image/'));
     const subFolders = subItems.filter(
@@ -94,7 +95,7 @@ export async function processFolderStructure(
         folderId: folder.id,
         folderName: folder.name,
         slugFolder: currentSlug,
-        folderIdOfPhotos: webFolder?.id || hasImages?.id,
+        folderIdOfPhotos: webFolder?.id || hasImages ? folder.id : '',
   
         parentId: parentId || '',
         parentName: parentName || '',
