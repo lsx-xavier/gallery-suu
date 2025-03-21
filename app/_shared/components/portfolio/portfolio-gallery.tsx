@@ -11,7 +11,7 @@ import { range } from './utils';
 
 type PortfolioGalleryProps = {
   listOfImages: ImageDto[];
-  currentImage: ImageDto;
+  currentImage: ImageDto | undefined;
   fetchNextImages: () => Promise<void>;
 };
 
@@ -20,7 +20,7 @@ export default function Gallery({
   currentImage: currentImageProps,
   fetchNextImages,
 }: PortfolioGalleryProps) {
-  const [currentImage, setCurrentImage] = useState<ImageDto>(currentImageProps);
+  const [currentImage, setCurrentImage] = useState<ImageDto | undefined>(currentImageProps);
   const [isLoadingImage, setIsLoadingImage] = useState(true);
   const [isLoadingMoreImage, setIsLoadingMoreImage] = useState(false);
 
@@ -32,7 +32,7 @@ export default function Gallery({
     [listOfImages],
   );
 
-  const findIndexOfCurrentImage = listOfImages.findIndex((item) => item.id === currentImage.id);
+  const findIndexOfCurrentImage = listOfImages.findIndex((item) => item.id === currentImage?.id);
 
   const hasPrevImage = findIndexOfCurrentImage > 0;
   const hasNextImage = findIndexOfCurrentImage < listOfImages.length - 1;
@@ -76,6 +76,8 @@ export default function Gallery({
   const filteredImages = listOfImages?.filter((_, index) =>
     range(findIndexOfCurrentImage - 15, findIndexOfCurrentImage + 15).includes(index),
   );
+
+  if (!currentImage) return null;
 
   return (
     <MotionConfig

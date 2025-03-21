@@ -8,11 +8,11 @@ import { FolderStructure, maybeSaveToMongoDbProps, OnProgress } from './types';
 export async function maybeSaveToMongoDb({ foldersData, onProgress }: maybeSaveToMongoDbProps) {
   const existingFolders = await prisma.folder.findMany({
     where: {
-      slugFolder: { in: foldersData.map(folder => folder.slugFolder) },
+      slugFolder: { in: foldersData.map((folder) => folder.slugFolder) },
     },
   });
 
-  const existingFolderMap = new Map(existingFolders.map(folder => [folder.slugFolder, folder]));
+  const existingFolderMap = new Map(existingFolders.map((folder) => [folder.slugFolder, folder]));
 
   const foldersToCreate = [];
   const foldersToUpdate = [];
@@ -43,10 +43,10 @@ export async function maybeSaveToMongoDb({ foldersData, onProgress }: maybeSaveT
 
   // Realiza as atualizações em lote
   if (foldersToUpdate.length > 0) {
-    await Promise.all(foldersToUpdate.map(folder => 
-      prisma.folder.update(folder)
-    ));
-    onProgress?.(`[maybe-save-to-mongoDb] Folders updated in MongoDB. \n  Folders updated: \n ${foldersToUpdate.map(f => f.data.folderName)}`);
+    await Promise.all(foldersToUpdate.map((folder) => prisma.folder.update(folder)));
+    onProgress?.(
+      `[maybe-save-to-mongoDb] Folders updated in MongoDB. \n  Folders updated: \n ${foldersToUpdate.map((f) => f.data.folderName)}`,
+    );
   }
 
   // Realiza as inserções em lote
@@ -54,7 +54,9 @@ export async function maybeSaveToMongoDb({ foldersData, onProgress }: maybeSaveT
     await prisma.folder.createMany({
       data: foldersToCreate,
     });
-    onProgress?.(`[maybe-save-to-mongoDb] Folders inserted in MongoDB. \n  Folders inserted: \n ${foldersToCreate.map(f => f.folderName)}`);
+    onProgress?.(
+      `[maybe-save-to-mongoDb] Folders inserted in MongoDB. \n  Folders inserted: \n ${foldersToCreate.map((f) => f.folderName)}`,
+    );
   }
 }
 
@@ -81,7 +83,6 @@ export async function processFolderStructure(
       resParams: { pageSize: 1000 },
     });
 
-    // TODO: Verificar se a pasta web existe e se existe, adicionar o id da pasta web no folderIdOfPhotos
     const webFolder = subItems.find((i) => i.name?.toLowerCase() === 'web');
     const hasImages = subItems.find((i) => i.mimeType?.startsWith('image/'));
     const subFolders = subItems.filter(
@@ -90,17 +91,24 @@ export async function processFolderStructure(
     );
 
     if (webFolder || hasImages) {
-      console.log('[process-folder-structure] Add folder to allFolders');
+      console.log('[process-folder-structure] Add folder to allFolders\n');
+      // Pega o id da pasta web ou a pasta que tem imagens
+      const folderIdOfPhotos = webFolder ? webFolder.id : hasImages ? folder.id : '';
+
+      // Adiciona a pasta ao array de pastas
       allFolders?.push({
+        // Pasta corrente
         folderId: folder.id,
         folderName: folder.name,
         slugFolder: currentSlug,
-        folderIdOfPhotos: webFolder?.id || hasImages ? folder.id : '',
-  
+        folderIdOfPhotos,
+
+        // Pasta pai
         parentId: parentId || '',
         parentName: parentName || '',
         slugParent: parentSlug || '',
-  
+
+        // Mais informações
         thumbId: '',
         usersIds: [],
         createdAt: new Date(),

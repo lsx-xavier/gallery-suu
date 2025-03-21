@@ -16,10 +16,12 @@ export function GalleryMansory({ folders }: FolderRouterDto) {
   const [images, setImages] = useState<ImageDto[] | undefined>(undefined);
   const [nextPage, setNextPage] = useState<TokenFolderPage>(undefined);
   const [isFetching, setIsFetching] = useState(false);
+  const [isEmpty, setIsEmpty] = useState(false);
 
   const fetchImages = useCallback(
     async (nextPageProps?: TokenFolderPage) => {
       if (!folders) return;
+      setIsEmpty(false);
       setIsFetching(true);
 
       try {
@@ -35,11 +37,12 @@ export function GalleryMansory({ folders }: FolderRouterDto) {
           },
         });
 
-        if (!photos) {
-          throw {
-            message: 'No photos or next page token',
-            status: 404,
-          };
+        if (!photos || photos.length === 0) {
+          console.log('Nenhuma foto encontrada');
+          setIsFetching(false);
+          setIsEmpty(true);
+
+          return;
         }
 
         setNextPage(nextPageToken);
@@ -57,11 +60,13 @@ export function GalleryMansory({ folders }: FolderRouterDto) {
   );
 
   useEffect(() => {
+    setIsEmpty(false);
     fetchImages();
   }, [fetchImages]);
 
+  const countToRowVirtualizer = (images || []).length;
   const rowVirtualizer = useVirtualizer({
-    count: (images || []).length,
+    count: countToRowVirtualizer,
     getScrollElement: () => document.documentElement,
     estimateSize: () => 50, // Um valor aproximado inicial
     measureElement: (el) => el.getBoundingClientRect().height, // ✅ Mede altura real
@@ -143,7 +148,33 @@ export function GalleryMansory({ folders }: FolderRouterDto) {
     [folders],
   );
 
-  if (!images) return null;
+  if (isEmpty){
+    return (
+      <div className="flex flex-col justify-center items-center h-screen gap-4">
+        <h1 className="text-2xl font-bold">
+          Suas fotos estão sendo tratadas com carinho, por favor, tente novamente mais tarde.
+          conosco.
+        </h1>
+        <p className="text-sm text-gray-500">
+          Se o erro persistir, entre em contato conosco.
+        </p>
+      </div>
+    );
+  }
+
+  if (!images && !isFetching) {
+    return (
+      <div className="flex flex-col justify-center items-center h-screen gap-4">
+        <h1 className="text-2xl font-bold">
+          Ocorreu um erro ao carregar as fotos, por favor, tente novamente.
+        </h1>
+        <p className="text-sm text-gray-500">
+          Se o erro persistir, entre em contato conosco.
+        </p>
+        <Button onClick={() => fetchImages()}>Tentar novamente</Button>
+      </div>
+    );
+  }
 
   return (
     <Masonry
@@ -157,7 +188,7 @@ export function GalleryMansory({ folders }: FolderRouterDto) {
       {rowVirtualizer.getVirtualItems().map((virtualRow) => (
         <div key={virtualRow.key} className="relative break-inside-avoid">
           <Modal
-            key={String(images[virtualRow.index]?.id)}
+            key={String(images?.[virtualRow.index]?.id)}
             title={
               <div className="max-w-[50%] absolute top-2 left-1/2 -translate-x-1/2 flex flex-col md:flex-row  justify-center items-center gap-2 z-10">
                 <h3>{titleOfModal}</h3>
@@ -165,7 +196,7 @@ export function GalleryMansory({ folders }: FolderRouterDto) {
                   className="flex items-center justify-center"
                   size="sm"
                   leftIcon={<DownloadSimple className="text-2xl" />}
-                  onClick={() => handleDownloadPhoto(images[virtualRow.index])}
+                  onClick={() => handleDownloadPhoto(images?.[virtualRow.index])}
                   isLoading={isDownloading === 'single'}
                 >
                   Baixar foto
@@ -184,12 +215,12 @@ export function GalleryMansory({ folders }: FolderRouterDto) {
             whitCloseButton
             trigger={
               <Image
-                src={(images[virtualRow.index]?.webContentLink as string).replaceAll(
+                src={(images?.[virtualRow.index]?.webContentLink as string).replaceAll(
                   '=download',
                   '=view',
                 )}
-                alt={images[virtualRow.index]?.name}
-                className='"w-full rounded-lg !relative !h-[auto]'
+                alt={images?.[virtualRow.index]?.name || ''}
+                className="w-full rounded-lg !relative !h-[auto]"
                 objectFit="cover"
                 width={1920}
                 height={1080}
@@ -205,16 +236,17 @@ export function GalleryMansory({ folders }: FolderRouterDto) {
             content={
               <PortfolioGallery
                 fetchNextImages={handleNextPageOfImages}
-                listOfImages={images}
-                currentImage={images[virtualRow.index]}
+                listOfImages={images || []}
+                currentImage={images?.[virtualRow.index] || undefined}
               />
             }
           />
         </div>
       ))}
+
       {isFetching &&
         Array.from({ length: 18 }).map((_, index) => (
-          <div key={index} className="relative break-inside-avoid">
+          <div key={index} className="relative break-inside-avoid aspect-square aspect-w-1 aspect-h-1 rounded-lg overflow-hidden">
             <ShimmerComponent w={1920} h={1080} />
           </div>
         ))}
