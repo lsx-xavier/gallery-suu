@@ -15,7 +15,6 @@ export default function Layout({ children, params }: ModalLayoutProps) {
     const { id } = React.use(params);
     const { usuarios, loading } = useUsuarios();
     const usuario = usuarios.find(usuario => usuario.id === id);
-
     
     return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center">

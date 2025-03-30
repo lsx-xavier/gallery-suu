@@ -1,7 +1,7 @@
 'use client'
 import { Folder, Users } from "@prisma/client";
-import { useEffect, useState } from "react";
-import { create } from "../../[id]/action";
+import { useCallback, useEffect, useState } from "react";
+import { create, update } from "../../[id]/action";
 import { getAllFolders } from "../../../pastas/action";
 import useDebounce from "@/hooks/useDebounce";
 
@@ -16,10 +16,7 @@ export function FormUsuario({ usuario }: FormUsuarioProps) {
     const [allFolders, setAllFolders] = useState<Record<string, Folder[]>| never[]>([]);
     const [selectedFolders, setSelectedFolders] = useState<string[]>([]);
     const [search, setSearch] = useState('');
-    const term = useDebounce(search, 1000);
-
-
-    
+    const term = useDebounce(search, 1000);    
 
     useEffect(() => {
         const fetchAllFolders = async () => {
@@ -30,24 +27,34 @@ export function FormUsuario({ usuario }: FormUsuarioProps) {
         fetchAllFolders();
     }, []);
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        if(!userName || !password) {
+        if(!userName || !password || !role || !selectedFolders || selectedFolders.length === 0) {
             return alert('Preencha todos os campos');
         }
 
         try{
-            await create({
-                userName,
-                password,
-                role,
-                folders: selectedFolders
-            })
+            if(usuario) {
+                await update({
+                    id: usuario.id,
+                    userName,
+                    password,
+                    role,
+                    folders: selectedFolders
+                })
+            } else {
+                await create({
+                    userName,
+                    password,
+                    role,
+                    folders: selectedFolders
+                })
+            }
         } catch(err) {
             console.error(err);
         }
-    }
+    }, [userName, password, role, selectedFolders, usuario])
     
     return (
         <form
