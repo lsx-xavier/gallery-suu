@@ -1,12 +1,15 @@
 'use client'
-import { Folder, Users } from "@prisma/client";
-import { useCallback, useEffect, useState } from "react";
-import { create, update } from "../../[id]/action";
-import { getAllFolders } from "../../../pastas/action";
 import useDebounce from "@/hooks/useDebounce";
+import { Folder } from "@prisma/client";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+import { getAllFolders } from "../../../pastas/action";
+import { create, update } from "../../[id]/action";
+import { useUsuarios } from "../../context/ContextUsuarios";
+import { UserWithFolders } from "../../context/ContextUsuarios/actions";
 
 type FormUsuarioProps = {
-    usuario?: Users
+    usuario?: UserWithFolders
 }
 
 export function FormUsuario({ usuario }: FormUsuarioProps) {
@@ -14,9 +17,11 @@ export function FormUsuario({ usuario }: FormUsuarioProps) {
     const [password, setPassword] = useState(usuario?.password);
     const [role, setRole] = useState<"ADMIN" | "USER">(usuario?.role || "USER");
     const [allFolders, setAllFolders] = useState<Record<string, Folder[]>| never[]>([]);
-    const [selectedFolders, setSelectedFolders] = useState<string[]>([]);
+    const [selectedFolders, setSelectedFolders] = useState<string[]>(usuario?.folders || []);
     const [search, setSearch] = useState('');
-    const term = useDebounce(search, 1000);    
+    const term = useDebounce(search, 1000);
+    const { fetchUsuarios } = useUsuarios();
+    const router = useRouter();
 
     useEffect(() => {
         const fetchAllFolders = async () => {
@@ -51,10 +56,13 @@ export function FormUsuario({ usuario }: FormUsuarioProps) {
                     folders: selectedFolders
                 })
             }
+
+            fetchUsuarios();
+            router.back()
         } catch(err) {
             console.error(err);
         }
-    }, [userName, password, role, selectedFolders, usuario])
+    }, [fetchUsuarios, password, role, router, selectedFolders, userName, usuario, router])
     
     return (
         <form

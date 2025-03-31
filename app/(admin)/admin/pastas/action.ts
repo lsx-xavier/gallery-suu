@@ -4,7 +4,7 @@ import prisma from "@/config/primsa";
 import { Folder } from "@prisma/client";
 
  
-export async function getAllFolders() {
+export async function getAllFolders(): Promise<Record<string, Folder[]>> {
     try {
         console.debug('[getAllFolders] Buscando todas as pastas');
         const allFolders = await prisma.folder.findMany();
@@ -19,10 +19,10 @@ export async function getAllFolders() {
             acc[parentId as keyof typeof acc].push(folder);
 
             return acc;
-        }, {} as  Record<string, Folder[]>);
+        }, {} as Record<string, Folder[]>) || {};
     } catch (error) {
         console.debug('[getAllFolders] Erro ao buscar pastas');
         console.error(error);
-        return [];
+        return {};
     }
 }

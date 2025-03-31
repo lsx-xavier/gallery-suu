@@ -1,30 +1,22 @@
 'use client';
 
-import { createContext, useContext, ReactNode, useState, useCallback, useEffect } from 'react';
-import { Users } from '@prisma/client';
-import httpClient from '@/config/httpClient';
+import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react';
+import { getUsersWithFolders, UserWithFolders } from './actions';
 interface UsuariosContextData {
-  usuarios: Users[];
+  usuarios: UserWithFolders[];
   loading: boolean;
-  error: string | null;
   fetchUsuarios: () => Promise<void>;
-  addUsuario: (usuario: Omit<Users, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
-  updateUsuario: (id: string, usuario: Partial<Users>) => Promise<void>;
-  deleteUsuario: (id: string) => Promise<void>;
 }
 
 const UsuariosContext = createContext<UsuariosContextData>({} as UsuariosContextData);
 
 export function UsuariosProvider({ children }: { children: ReactNode }) {
-  const [usuarios, setUsuarios] = useState<Users[]>([]);
+  const [usuarios, setUsuarios] = useState<UserWithFolders[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const fetchUsuarios = useCallback(async () => {
     try {
-      const allAccounts = await httpClient.get<Users[]>({
-        url: '/get-accounts',
-      });
+      const allAccounts = await getUsersWithFolders();
 
       setUsuarios(allAccounts);
     } catch (err) {
@@ -37,52 +29,13 @@ export function UsuariosProvider({ children }: { children: ReactNode }) {
     fetchUsuarios().finally(() => setLoading(false));
   }, [fetchUsuarios]);
 
-  const addUsuario = async (usuario: Omit<Users, 'id' | 'createdAt' | 'updatedAt'>) => {
-    try {
-      setLoading(true);
-      // Implementar chamada à API para adicionar usuário
-      setError(null);
-    } catch (err) {
-      setError('Erro ao adicionar usuário');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const updateUsuario = async (id: string, usuario: Partial<Users>) => {
-    try {
-      setLoading(true);
-      // Implementar chamada à API para atualizar usuário
-      setError(null);
-    } catch (err) {
-      setError('Erro ao atualizar usuário');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const deleteUsuario = async (id: string) => {
-    try {
-      setLoading(true);
-      // Implementar chamada à API para deletar usuário
-      setError(null);
-    } catch (err) {
-      setError('Erro ao deletar usuário');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <UsuariosContext.Provider
       value={{
         usuarios,
         loading,
-        error,
         fetchUsuarios,
-        addUsuario,
-        updateUsuario,
-        deleteUsuario,
       }}
     >
       {children}
