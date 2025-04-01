@@ -24,7 +24,7 @@ model Users {
   role      UserRole
   createdAt DateTime @default(now())
   userName  String
-  folders   Folder[]
+  folders   Folder[] @relation("UserFolders")
 
   @@map("users")
 }
@@ -39,7 +39,7 @@ model Folder {
   parentId         String?
   folderIdOfPhotos String
   thumbId          String
-  users            Users[]
+  users            Users[] @relation("UserFolders")
   createdAt        DateTime
 
   @@map("folders")

@@ -1,9 +1,8 @@
 'use server'
 
-import  { RequestCreateAccountDto } from "@/app/services/create-account";
+import { RequestCreateAccountDto } from "@/app/services/create-account";
 import prisma from "@/config/primsa";
 import { hashPassword } from "@/utils/encrypt-decrypt";
-import { updateUserIdInFolders } from "../pastas/action";
 
 type RequestCreateUserDto = RequestCreateAccountDto & {
     id?: string;
@@ -11,12 +10,17 @@ type RequestCreateUserDto = RequestCreateAccountDto & {
 }
 
 export async function getAllUsers() {
-    const users = await prisma.users.findMany()
+    const users = await prisma.users.findMany({
+        include: {
+            folders: true
+        }
+    });
+    
     return users
 }
  
 export async function create(formData: RequestCreateUserDto) {
-    const { userName, password } = formData;
+    const { userName, password, folders } = formData;
 
     if(!userName || !password) {
         throw new Error('Preencha todos os campos');
@@ -39,7 +43,13 @@ export async function create(formData: RequestCreateUserDto) {
         data: {
             userName,
             password: parsedHashPassword,
-            role: "USER"
+            role: "USER",
+            folders: {
+                connect: folders.map(id => ({ id }))
+            }
+        },
+        include: {
+            folders: true
         }
     })
 
@@ -47,43 +57,21 @@ export async function create(formData: RequestCreateUserDto) {
         throw new Error('Erro ao criar usuário');
     }
 
-    for(const f of formData.folders) {
-        const folder = await prisma.folder.findUnique({
-            where: { id: f },
-            select: { usersIds: true }
-        });
-
-        if(!folder) {
-            throw new Error('Pasta não encontrada');
-        }
-
-        if(folder.usersIds.includes(newUser.id)) {
-            throw new Error('Usuário já possui acesso a esta pasta');
-        }
-
-        await prisma.folder.update({
-            where: {
-                id: f
-            },
-            data: {
-                usersIds: {
-                    push: newUser.id
-                }
-            }
-        })
-    }
-    
+    return newUser;
 }
 
 export async function update(formData: RequestCreateUserDto) {
-    const { id, userName, password } = formData;
+    const { id, userName, password, folders } = formData;
 
     if(!id) {
         throw new Error('Requisição inválida');
     }
 
     const findUser = await prisma.users.findUnique({
-        where: { id }
+        where: { id },
+        include: {
+            folders: true
+        }
     })
 
     if(!findUser) {
@@ -95,24 +83,20 @@ export async function update(formData: RequestCreateUserDto) {
     }
 
     const parsedHashPassword = await hashPassword(password);
-
-    if(parsedHashPassword !== findUser.password) {
-        await prisma.users.update({
-            where: { id },
-            data: {
-                password: parsedHashPassword
+    
+    const updatedUser = await prisma.users.update({
+        where: { id },
+        data: {
+            userName: userName !== findUser.userName ? userName : undefined,
+            password: parsedHashPassword !== findUser.password ? parsedHashPassword : undefined,
+            folders: {
+                set: folders.map(id => ({ id }))
             }
-        })
-    }
+        },
+        include: {
+            folders: true
+        }
+    });
 
-    if(userName !== findUser.userName) {
-        await prisma.users.update({
-            where: { id },
-            data: {
-                userName
-            }
-        })
-    }
-
-    await updateUserIdInFolders(findUser.id, formData.folders);
+    return updatedUser;
 }

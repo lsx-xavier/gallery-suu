@@ -3,10 +3,12 @@
 import prisma from "@/config/primsa";
 import { Folder } from "@prisma/client";
 
-
-
 export async function getAllFolders(): Promise<Folder[]> {
-    return await prisma.folder.findMany();
+    return await prisma.folder.findMany({
+        include: {
+            users: true
+        }
+    });
 }
 
 export type FolderWithHierarchy = Record<string, Folder[]>
@@ -35,47 +37,34 @@ export async function getAllFoldersWithHierarchy(): Promise<FolderWithHierarchy>
 }
 
 export async function getAllFoldersByUserId(userId: string) {
-    const userInfolders = await prisma.folder.findMany({
-        where: { usersIds: { has: userId } },
+    // Usando a relação direta do Prisma
+    const userWithFolders = await prisma.users.findUnique({
+        where: { id: userId },
+        include: {
+            folders: true
+        }
     });
 
-    return userInfolders;
+    return userWithFolders?.folders || [];
 }
 
 export async function updateUserIdInFolders(userId: string, folders: string[]) {
-    // Busca todas as pastas que o usuário tem acesso atualmente
-    const userInfolders = await getAllFoldersByUserId(userId);
+    // Buscar o usuário
+    const user = await prisma.users.findUnique({
+        where: { id: userId }
+    });
 
-    // Para cada pasta atual do usuário
-    for(const f of userInfolders) {
-        // Se a pasta não está na nova lista de pastas, remove o acesso do usuário
-        if(!folders.includes(f.id)) {
-            await prisma.folder.update({
-                where: { id: f.id },
-                data: { 
-                    usersIds: {
-                        set: f.usersIds.filter(folderUserId => folderUserId !== userId)
-                    }
-                }
-            });
-        }
-        
-        // Remove o ID da pasta da lista de folders
-        const index = folders.indexOf(f.id);
-        if (index > -1) {
-            folders.splice(index, 1);
-        }
+    if (!user) {
+        throw new Error('Usuário não encontrado');
     }
 
-    // Adiciona o usuário às pastas restantes (que são apenas as novas)
-    for(const newFolderId of folders) {
-        await prisma.folder.update({
-            where: { id: newFolderId },
-            data: { 
-                usersIds: {
-                    push: userId
-                }
+    // Atualizar as relações do usuário com as pastas em uma única operação
+    await prisma.users.update({
+        where: { id: userId },
+        data: {
+            folders: {
+                set: folders.map(id => ({ id }))
             }
-        });
-    }
+        }
+    });
 }

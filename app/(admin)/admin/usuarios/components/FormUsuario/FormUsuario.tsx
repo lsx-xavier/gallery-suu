@@ -6,8 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 import { getAllFoldersWithHierarchy } from "../../../pastas/action";
 import { create, update } from "../../action";
 import { useUsuarios } from "../../context/ContextUsuarios";
-import { UserWithFolders } from "../../context/ContextUsuarios/actions";
-
+import { UserWithFolders } from "../../context/ContextUsuarios";
 type FormUsuarioProps = {
     usuario?: UserWithFolders
 }
@@ -17,7 +16,7 @@ export function FormUsuario({ usuario }: FormUsuarioProps) {
     const [password, setPassword] = useState(usuario?.password);
     const [role, setRole] = useState<"ADMIN" | "USER">(usuario?.role || "USER");
     const [allFolders, setAllFolders] = useState<Record<string, Folder[]>| never[]>([]);
-    const [selectedFolders, setSelectedFolders] = useState<string[]>(usuario?.folders || []);
+    const [selectedFolders, setSelectedFolders] = useState<Folder['id'][]>(usuario?.folders.map(folder => folder.id) || []);
     const [search, setSearch] = useState('');
     const { fetchUsuarios } = useUsuarios();
     const router = useRouter();
@@ -62,7 +61,7 @@ export function FormUsuario({ usuario }: FormUsuarioProps) {
         } catch(err) {
             console.error(err);
         }
-    }, [fetchUsuarios, password, role, router, selectedFolders, userName, usuario, router])
+    }, [fetchUsuarios, password, role, router, selectedFolders, userName, usuario])
     
     return (
         <form

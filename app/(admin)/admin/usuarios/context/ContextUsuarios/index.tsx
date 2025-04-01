@@ -1,7 +1,13 @@
 'use client';
 
+import { Prisma } from '@prisma/client';
 import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react';
-import { getUsersWithFolders, UserWithFolders } from './actions';
+import { getAllUsers } from '../../action';
+
+export type UserWithFolders =  Prisma.UsersGetPayload<{
+  include: { folders: true }
+}>;
+
 interface UsuariosContextData {
   usuarios: UserWithFolders[];
   loading: boolean;
@@ -16,7 +22,7 @@ export function UsuariosProvider({ children }: { children: ReactNode }) {
 
   const fetchUsuarios = useCallback(async () => {
     try {
-      const allAccounts = await getUsersWithFolders();
+      const allAccounts = await getAllUsers();
 
       setUsuarios(allAccounts);
     } catch (err) {
