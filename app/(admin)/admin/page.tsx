@@ -1,18 +1,23 @@
 import Link from "next/link";
+import { getAllFolders } from "./pastas/action";
+import { getAllUsers } from "./usuarios/action";
 
-export default function AdminIndex() {
+export default async function AdminIndex() {
+  const allFolders = await getAllFolders()
+  const allUsers = await getAllUsers()
+  
   return  <div className="flex flex-col gap-2">
       <h4 className="text-base">Visualização de dados</h4>
 
       <div className="flex gap-4">
         <div className="flex flex-col gap-2">
           <h3 className="font-semibold text-sm">Pastas Mapeadas</h3>
-          <p><strong>100</strong></p>
+          <p><strong>{allFolders.length}</strong></p>
         </div>
 
         <div className="flex flex-col gap-2">
           <h3 className="font-semibold text-sm">Usuários Criados</h3>
-          <p><strong>100</strong></p>
+          <p><strong>{allUsers.length}</strong></p>
         </div>
       </div>
 

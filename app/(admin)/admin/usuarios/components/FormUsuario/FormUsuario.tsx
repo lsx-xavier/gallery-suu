@@ -3,8 +3,8 @@ import useDebounce from "@/hooks/useDebounce";
 import { Folder } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { getAllFolders } from "../../../pastas/action";
-import { create, update } from "../../[id]/action";
+import { getAllFoldersWithHierarchy } from "../../../pastas/action";
+import { create, update } from "../../action";
 import { useUsuarios } from "../../context/ContextUsuarios";
 import { UserWithFolders } from "../../context/ContextUsuarios/actions";
 
@@ -19,13 +19,13 @@ export function FormUsuario({ usuario }: FormUsuarioProps) {
     const [allFolders, setAllFolders] = useState<Record<string, Folder[]>| never[]>([]);
     const [selectedFolders, setSelectedFolders] = useState<string[]>(usuario?.folders || []);
     const [search, setSearch] = useState('');
-    const term = useDebounce(search, 1000);
     const { fetchUsuarios } = useUsuarios();
     const router = useRouter();
+    const term = useDebounce(search, 1000);
 
     useEffect(() => {
         const fetchAllFolders = async () => {
-            const allFolders = await getAllFolders();
+            const allFolders = await getAllFoldersWithHierarchy();
             
             setAllFolders(allFolders);
         }
