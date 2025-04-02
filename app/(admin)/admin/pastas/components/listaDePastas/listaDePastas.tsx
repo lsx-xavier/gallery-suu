@@ -2,6 +2,8 @@
 import useDebounce from '@/hooks/useDebounce';
 import { FolderWithHierarchy } from '../../action';
 import { useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 
 export function ListaDePastas({ allFolders }: { allFolders: FolderWithHierarchy }) {
   const [search, setSearch] = useState('');
@@ -32,9 +34,10 @@ export function ListaDePastas({ allFolders }: { allFolders: FolderWithHierarchy 
               {folder
                 .filter((f) => f.folderName.toLowerCase().includes(term.toLowerCase()))
                 .map((f) => (
-                  <div key={f.id} className="flex items-center">
-                    <p>{f.folderName}</p>
-                  </div>
+                  <Link href={`/admin/pastas/${f.id}`} key={f.id} className="flex items-center aspect-square">
+                    <Image src={f.thumbId} alt={f.folderName} width={100} height={100} />
+                    <h5 className="text-sm font-bold absolute bottom-0 left-0 bg-black/50 text-white p-2">{f.folderName}</h5>
+                  </Link>
                 ))}
               </div>
             </div>

@@ -3,13 +3,19 @@
 import { RequestCreateAccountDto } from "@/app/services/create-account";
 import prisma from "@/config/primsa";
 import { hashPassword } from "@/utils/encrypt-decrypt";
+import { Prisma } from "@prisma/client";
+
+
+export type UserWithFolders = Prisma.UsersGetPayload<{
+    include: { folders: true }
+}>
 
 type RequestCreateUserDto = RequestCreateAccountDto & {
     id?: string;
     folders: string[];
 }
 
-export async function getAllUsers() {
+export async function getAllUsers(): Promise<UserWithFolders[]> {
     const users = await prisma.users.findMany({
         include: {
             folders: true

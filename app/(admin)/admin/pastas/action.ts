@@ -11,6 +11,15 @@ export async function getAllFolders(): Promise<Folder[]> {
     });
 }
 
+export async function getFolderById(id: string): Promise<Folder | null> {
+    return await prisma.folder.findUnique({
+        where: { id },
+        include: {
+            users: true
+        }
+    });
+}
+
 export type FolderWithHierarchy = Record<string, Folder[]>
 
 export async function getAllFoldersWithHierarchy(): Promise<FolderWithHierarchy> {
