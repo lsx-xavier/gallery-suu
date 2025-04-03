@@ -1,7 +1,13 @@
 'use server'
 
 import prisma from "@/config/primsa";
-import { Folder } from "@prisma/client";
+import { Folder, Prisma } from "@prisma/client";
+import { SelectedInfos } from "./components/ModalConfigurar/ModalConfigurar";
+
+export type FoldersWithUsers = Prisma.FolderGetPayload<{
+    include: { users: true }
+}>
+
 
 export async function getAllFolders(): Promise<Folder[]> {
     return await prisma.folder.findMany({
@@ -11,7 +17,7 @@ export async function getAllFolders(): Promise<Folder[]> {
     });
 }
 
-export async function getFolderById(id: string): Promise<Folder | null> {
+export async function getFolderById(id: string): Promise<FoldersWithUsers | null> {
     return await prisma.folder.findUnique({
         where: { id },
         include: {
@@ -74,6 +80,18 @@ export async function updateUserIdInFolders(userId: string, folders: string[]) {
             folders: {
                 set: folders.map(id => ({ id }))
             }
+        }
+    });
+}
+
+export async function updateFolderInfos(folderId: string, infos: SelectedInfos) {
+    await prisma.folder.update({
+        where: { id: folderId },
+        data: {
+            users: {
+                set: infos.users?.map(id => ({ id }))
+            },
+            thumbId: infos.photo
         }
     });
 }

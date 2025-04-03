@@ -5,7 +5,6 @@ export default function Page() {
     
     return (
         <RouterModal>
-            <p>MODAL</p>
             <ModalConfigurar />
         </RouterModal>
     );
