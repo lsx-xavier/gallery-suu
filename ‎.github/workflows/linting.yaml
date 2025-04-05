@@ -3,7 +3,7 @@ name: Linting
 on: pull_request
 
 jobs:
-  Prettier:
+  prettier:
     name: Prettier
     runs-on: ubuntu-latest
     steps:
@@ -11,7 +11,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 'lts/setup-node@v4'
+          node-version: 'lts/hydrogen'
 
       - run: npm ci
 
