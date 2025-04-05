@@ -80,7 +80,7 @@ export async function downloadImages({ foldersName, photoId }: DownloadImagesPro
 
           // Adiciona arquivos ao ZIP dentro da pasta
           downloads.forEach(({ name, data }) => {
-            fotosFolder?.file(name, data);
+            fotosFolder?.file(name, data as Buffer);
           });
 
           nextPage = resp.data.nextPageToken;

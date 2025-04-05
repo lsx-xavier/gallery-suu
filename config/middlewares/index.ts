@@ -1,5 +1,6 @@
 //Agora, podemos verificar o token no middleware para proteger rotas privadas:
 export function middleware(req: Request) {
+  // @ts-expect-error - This is a workaround to avoid the type error
   const token = req.cookies.get('auth_token')?.value;
 
   if (!token || !verifyToken(token)) {
