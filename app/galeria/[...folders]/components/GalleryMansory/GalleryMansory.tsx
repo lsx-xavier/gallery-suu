@@ -1,7 +1,7 @@
 'use client';
 
-import { Button } from '@/app/_shared/components';
-import Modal from '@/app/_shared/components/Modal';
+import { Button } from '@/(infra)/components';
+import Modal from '@/(infra)/components/Modal';
 import httpClient from '@/(infra)/config/httpClient';
 import { ShimmerComponent, ShimmerImage } from '@/(infra)/utils/shimmer-image';
 import { DownloadSimple } from '@phosphor-icons/react/dist/ssr';

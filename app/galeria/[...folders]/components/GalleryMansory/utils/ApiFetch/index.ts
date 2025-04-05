@@ -1,9 +1,4 @@
-import { FolderRouterDto, TokenFolderPage } from '@/entities/folder';
-
-export function getApiFecthForImages(
-  { folders }: FolderRouterDto,
-  nextPageProps?: TokenFolderPage,
-) {
+export function getApiFecthForImages({ folders }: { folders: string[] }, nextPageProps?: string) {
   let url = `/get-images-from?limit=18&targetFolder=${folders[folders.length - 1]}`;
 
   if (nextPageProps) {
