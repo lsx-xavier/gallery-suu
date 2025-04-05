@@ -1,5 +1,6 @@
 //Agora, podemos verificar o token no middleware para proteger rotas privadas:
 export function middleware(req: Request) {
+  // @ts-expect-error - This is a workaround to avoid the type error
   const token = req.cookies.get('auth_token')?.value;
 
   if (!token || !verifyToken(token)) {
@@ -10,12 +11,13 @@ export function middleware(req: Request) {
 }
 
 import jwt from 'jsonwebtoken';
+import { NextResponse } from 'next/server';
 
 // Middleware para verificar JWT nas requisições
 export function verifyToken(token: string) {
   try {
     return jwt.verify(token, process.env.JWT_SECRET || 'super-secreto');
-  } catch (error) {
+  } catch {
     return null;
   }
 }

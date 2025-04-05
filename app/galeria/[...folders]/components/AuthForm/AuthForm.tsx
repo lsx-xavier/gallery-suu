@@ -38,7 +38,7 @@ export function AuthForm({ folders, onSuccess }: AuthFormProps) {
 
   if (error) {
     return (
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gray-500 py-8 px-12 flex flex-col gap-2 rounded-lg">
+      <div className="absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col gap-2 rounded-lg bg-gray-500 px-12 py-8">
         <button
           type="button"
           onClick={() => setError(undefined)}
@@ -52,24 +52,24 @@ export function AuthForm({ folders, onSuccess }: AuthFormProps) {
   }
 
   return (
-    <div className="h-screen w-screen fixed top-0 left-0">
-      <div className="absolute top-0 left-0 bg-gray-500/55 w-screen h-screen backdrop-blur-[1.5px]" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gray-500 p-8 flex flex-col gap-2 rounded-lg max-w-[75%] md:max-w-[100%]">
-        <p className="mb-6 text-center w-full font-bold text-2xl">
+    <div className="fixed top-0 left-0 h-screen w-screen">
+      <div className="absolute top-0 left-0 h-screen w-screen bg-gray-500/55 backdrop-blur-[1.5px]" />
+      <div className="absolute top-1/2 left-1/2 flex max-w-[75%] -translate-x-1/2 -translate-y-1/2 flex-col gap-2 rounded-lg bg-gray-500 p-8 md:max-w-[100%]">
+        <p className="mb-6 w-full text-center text-2xl font-bold">
           Digite a conta para ver as fotos
         </p>
 
         <form onSubmit={handleAuth} className="flex flex-col gap-5">
-          <div className="flex gap-2 flex-col md:flex-row">
+          <div className="flex flex-col gap-2 md:flex-row">
             <input
-              className="border border-zinc-800 bg-transparent rounded-md p-2 text-white placeholder-white"
+              className="rounded-md border border-zinc-800 bg-transparent p-2 text-white placeholder-white"
               placeholder="Usuário"
               type="text"
               name="user"
               onChange={(e) => setUser(e.target.value)}
             />
             <input
-              className="border border-zinc-800 bg-transparent rounded-md p-2 text-white placeholder-white"
+              className="rounded-md border border-zinc-800 bg-transparent p-2 text-white placeholder-white"
               placeholder="Senha"
               type="password"
               name="pass"
@@ -78,7 +78,7 @@ export function AuthForm({ folders, onSuccess }: AuthFormProps) {
           </div>
 
           <button
-            className="border border-zinc-800 bg-transparent rounded-md py-3 hover:bg-zinc-800/30"
+            className="rounded-md border border-zinc-800 bg-transparent py-3 hover:bg-zinc-800/30"
             type="submit"
           >
             Ver as fotos

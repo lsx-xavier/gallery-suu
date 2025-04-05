@@ -12,7 +12,7 @@ type GaleriaPageProps = {
 
 export default function GaleriaPage({ params }: GaleriaPageProps) {
   const { folderName } = React.use(params);
-  const [images, setImages] = useState(undefined);
+  const [images, setImages] = useState<[]>([]);
   const [nextPage, setNextPage] = useState(undefined);
   const [isFetching, setIsFetching] = useState(false);
 
@@ -39,7 +39,7 @@ export default function GaleriaPage({ params }: GaleriaPageProps) {
 
       setIsFetching(false);
       setNextPage(nextPageToken);
-      setImages((prev) => [...(prev || []), ...imageFiles]);
+      setImages((prev) => [...(prev || []), ...((imageFiles as []) || [])]);
     },
     [folderName],
   );
@@ -61,7 +61,7 @@ export default function GaleriaPage({ params }: GaleriaPageProps) {
     console.log(lastItem);
     console.log(images?.length - 1);
 
-    const isAtBottom = lastItem?.index >= images.length - 1;
+    const isAtBottom = (lastItem?.index || 0) >= images.length - 1;
 
     if (isAtBottom && !isFetching) {
       fetchImages(nextPage);
@@ -89,8 +89,12 @@ export default function GaleriaPage({ params }: GaleriaPageProps) {
       {rowVirtualizer.getVirtualItems().map((virtualRow) => (
         <div key={virtualRow.key} className="relative break-inside-avoid">
           <Image
-            src={(images[virtualRow.index]?.webContentLink as string).split('&export=download')[0]}
-            alt={images[virtualRow.index]?.name}
+            src={
+              (
+                (images[virtualRow.index] as { webContentLink: string })?.webContentLink as string
+              ).split('&export=download')[0]
+            }
+            alt={(images[virtualRow.index] as { name: string })?.name}
             className='"w-full !relative !h-[auto] rounded-lg'
             objectFit="cover"
             loading="lazy"

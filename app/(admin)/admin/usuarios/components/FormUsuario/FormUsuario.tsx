@@ -109,7 +109,7 @@ export function FormUsuario({ usuario }: FormUsuarioProps) {
 
       <div>
         <label htmlFor="folder">Qual pasta de acesso?</label>
-        <div className="flex flex-col gap-2 max-h-[200px] overflow-y-auto mt-2">
+        <div className="mt-2 flex max-h-[200px] flex-col gap-2 overflow-y-auto">
           <input
             id="search"
             type="text"

@@ -17,12 +17,12 @@ export default function Layout({ children, params }: ModalLayoutProps) {
   const usuario = usuarios.find((usuario) => usuario.id === id);
 
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center">
-      <div className="bg-white px-6 py-4 rounded-lg relative">
+    <div className="fixed inset-0 flex items-center justify-center bg-black/60">
+      <div className="relative rounded-lg bg-white px-6 py-4">
         <Link
           href="/admin/usuarios"
           onClick={() => router.back()}
-          className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300"
+          className="absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300"
         >
           ✕
         </Link>

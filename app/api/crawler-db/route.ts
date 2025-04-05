@@ -15,7 +15,7 @@ export async function GET() {
     return NextResponse.json({ lastSaved: status, folders: all });
   } catch (err) {
     console.error('[crawler-SERVICE] Error getting status:', err);
-    return null;
+    return NextResponse.json({ error: '[crawler-SERVICE] Error getting status:' }, { status: 500 });
   }
 }
 
@@ -26,6 +26,6 @@ export async function DELETE() {
     return NextResponse.json('All data flushed', { status: 200 });
   } catch (err) {
     console.error('[crawler-SERVICE] Error getting status:', err);
-    return null;
+    return NextResponse.json({ error: '[crawler-SERVICE] Error getting status:' }, { status: 500 });
   }
 }

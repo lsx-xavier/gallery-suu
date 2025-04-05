@@ -23,7 +23,7 @@ export async function GET(req: Request) {
 
     // Se for uma única imagem, retorna diretamente
     if (photoId) {
-      return new NextResponse(fileStream.data, {
+      return new NextResponse((fileStream as Buffer & { data: Buffer }).data, {
         headers: {
           'Content-Type': 'image/jpeg',
           'Content-Disposition': `attachment; filename="suuk.jpg"`,
@@ -37,8 +37,9 @@ export async function GET(req: Request) {
         'Content-Disposition': `attachment; filename="${foldersName.join(' - ')}.zip"`,
       },
     });
-  } catch (err) {
-    console.error('[download-photo - API] Error getting photos:', err);
-    return NextResponse.json({ error: err.message }, { status: err.status });
+  } catch (err: unknown) {
+    const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+    console.error('[download-photo - API] Error getting photos:', errorMessage);
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

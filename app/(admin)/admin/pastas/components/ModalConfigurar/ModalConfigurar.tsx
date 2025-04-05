@@ -1,13 +1,13 @@
 'use client';
 
-import { Folder, Users } from '@prisma/client';
+import { Button } from '@/app/_shared/components/Button';
+import { Users } from '@prisma/client';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getAllUsers, UserWithFolders } from '../../../usuarios/action';
 import { FoldersWithUsers, getFolderById, updateFolderInfos } from '../../action';
-import { UserSelection } from './UserSelection';
 import { ThumbGallery } from './ThumbGallery';
-import { Button } from '@/app/_shared/components/Button';
+import { UserSelection } from './UserSelection';
 
 export type SelectedInfos = {
   users: Users['id'][] | undefined;
@@ -49,16 +49,16 @@ export function ModalConfigurar() {
   };
 
   return (
-    <div className="flex flex-col gap-4 min-w-[400px] max-w-[80%]">
+    <div className="flex max-w-[80%] min-w-[400px] flex-col gap-4">
       {isLoading ? (
         <div>Carregando...</div>
       ) : (
         <>
-          <h1 className="text-lg font-bold flex flex-col">
+          <h1 className="flex flex-col text-lg font-bold">
             Configurações <span className="text-sm font-normal">{folder?.folderName}</span>
           </h1>
 
-          <div className="flex gap-4 justify-between">
+          <div className="flex justify-between gap-4">
             <UserSelection
               folderId={folderId as string}
               isLoading={isLoading}

@@ -7,7 +7,7 @@ export const edgeConfig = {
     return response as T;
   },
 
-  async set(key: string, value: any) {
+  async set(key: string, value: unknown) {
     const response = await httpClient.post({
       url: '/api/edgeStore',
       body: JSON.stringify({ key, value }),

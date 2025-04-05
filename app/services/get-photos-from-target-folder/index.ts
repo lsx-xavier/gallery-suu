@@ -69,10 +69,11 @@ export default async function getPhotosFromTargetFolder(
       photos,
       nextPageToken,
     };
-  } catch (error) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return {
-      error: error.message,
-      status: error.status,
+      error: errorMessage,
+      status: 500,
     };
   }
 }

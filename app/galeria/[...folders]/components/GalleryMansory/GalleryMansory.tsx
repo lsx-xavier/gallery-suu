@@ -1,10 +1,8 @@
 'use client';
+
 import { Button } from '@/app/_shared/components';
 import Modal from '@/app/_shared/components/Modal';
-import PortfolioGallery from '@/app/_shared/components/portfolio/portfolio-gallery';
 import httpClient from '@/src/config/httpClient';
-import { FolderRouterDto, TokenFolderPage } from '@/entities/folder';
-import { ImageDto } from '@/entities/image';
 import { ShimmerComponent, ShimmerImage } from '@/src/utils/shimmer-image';
 import { DownloadSimple } from '@phosphor-icons/react/dist/ssr';
 import { useVirtualizer } from '@tanstack/react-virtual';
@@ -12,22 +10,26 @@ import Image from 'next/image';
 import { useCallback, useEffect, useState } from 'react';
 import Masonry from 'react-masonry-css';
 
-export function GalleryMansory({ folders }: FolderRouterDto) {
-  const [images, setImages] = useState<ImageDto[] | undefined>(undefined);
-  const [nextPage, setNextPage] = useState<TokenFolderPage>(undefined);
+// TODO: Review this error // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+export function GalleryMansory({ folders }: { folders: string[] }) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [images, setImages] = useState<any[] | undefined>(undefined);
+  const [nextPage, setNextPage] = useState<string | undefined>(undefined);
   const [isFetching, setIsFetching] = useState(false);
   const [isEmpty, setIsEmpty] = useState(false);
 
   const fetchImages = useCallback(
-    async (nextPageProps?: TokenFolderPage) => {
+    async (nextPageProps?: string) => {
       if (!folders) return;
       setIsEmpty(false);
       setIsFetching(true);
 
       try {
         const { photos, nextPageToken } = await httpClient.get<{
-          photos: ImageDto[];
-          nextPageToken: TokenFolderPage;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          photos: any[];
+          nextPageToken: string;
         }>({
           url: '/get-photos-from-target-folder',
           params: {
@@ -47,7 +49,8 @@ export function GalleryMansory({ folders }: FolderRouterDto) {
 
         setNextPage(nextPageToken);
         setImages((prev) => [
-          ...(prev?.filter((img) => !photos.some((p: ImageDto) => p.id === img.id)) || []),
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          ...(prev?.filter((img) => !photos.some((p: any) => p.id === img.id)) || []),
           ...photos,
         ]);
       } catch (err) {
@@ -101,15 +104,16 @@ export function GalleryMansory({ folders }: FolderRouterDto) {
     ' - ' +
     folders[folders.length - 1].replaceAll('-', ' ').replace(/\b\w/g, (char) => char.toUpperCase());
 
-  const handleNextPageOfImages = useCallback(async () => {
-    if (!isFetching && nextPage) {
-      await fetchImages(nextPage);
-    }
-  }, [fetchImages, nextPage, isFetching]);
+  // const handleNextPageOfImages = useCallback(async () => {
+  //   if (!isFetching && nextPage) {
+  //     await fetchImages(nextPage);
+  //   }
+  // }, [fetchImages, nextPage, isFetching]);
 
   const [isDownloading, setIsDownloading] = useState<'single' | 'all' | undefined>(undefined);
   const handleDownloadPhoto = useCallback(
-    async (photo?: ImageDto | undefined) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async (photo?: any | undefined) => {
       try {
         setIsDownloading(photo ? 'single' : 'all');
         const response = await httpClient.get<Blob>({
@@ -230,11 +234,12 @@ export function GalleryMansory({ folders }: FolderRouterDto) {
               />
             }
             content={
-              <PortfolioGallery
-                fetchNextImages={handleNextPageOfImages}
-                listOfImages={images || []}
-                currentImage={images?.[virtualRow.index] || undefined}
-              />
+              <></>
+              // <PortfolioGallery
+              //   fetchNextImages={handleNextPageOfImages}
+              //   listOfImages={images || []}
+              //   currentImage={images?.[virtualRow.index] || undefined}
+              // />
             }
           />
         </div>

@@ -1,7 +1,6 @@
-import { Folder, Users } from '@prisma/client';
+import { Folder } from '@prisma/client';
+import { Dispatch, SetStateAction } from 'react';
 import { UserWithFolders } from '../../../usuarios/action';
-import { Dispatch } from 'react';
-import { SetStateAction } from 'react';
 
 type UserSelectionProps = {
   folderId?: Folder['id'];
@@ -21,7 +20,6 @@ type UserSelectionProps = {
 };
 
 export function UserSelection({
-  folderId,
   users,
   onSelect,
   isLoading,
