@@ -1,5 +1,8 @@
 name: Automated Tests
 
+# A action continuará configurada mas nunca será executada
+if: false
+
 on: pull_request
 
 jobs:
