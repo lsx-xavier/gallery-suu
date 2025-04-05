@@ -9,11 +9,11 @@ export type FolderStructure = {
   folderId: string;
   slugFolder: string;
   slugParent: string;
-}
+};
 
 export type OnProgress = (message: string) => void;
 
 export type maybeSaveToMongoDbProps = {
   foldersData: FolderStructure[];
-  onProgress?: OnProgress
-}
+  onProgress?: OnProgress;
+};

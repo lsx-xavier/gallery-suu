@@ -1,1 +1,1 @@
-export * from './VoltarParaAdmin'
+export * from './VoltarParaAdmin';

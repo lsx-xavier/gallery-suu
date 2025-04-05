@@ -1,10 +1,10 @@
-import createUserToFolder from "@/app/services/create-user-to-folder";
-import { redis } from "@/config/redis";
-import { NextResponse } from "next/server";
+import createUserToFolder from '@/app/services/create-user-to-folder';
+import { redis } from '@/config/redis';
+import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json()
+    const body = await req.json();
     const { folders, user, pass } = body;
 
     const response = await createUserToFolder(folders, user, pass);
@@ -24,8 +24,8 @@ export async function GET() {
     const status = await redis.hgetall('auth:status');
     const all = await redis.keys('auth:*');
 
-    const allFindedLessStatus = all.filter(a => !a.includes('status'))
-    console.log({ allFindedLessStatus }, allFindedLessStatus.length)
+    const allFindedLessStatus = all.filter((a) => !a.includes('status'));
+    console.log({ allFindedLessStatus }, allFindedLessStatus.length);
 
     return NextResponse.json({ status });
   } catch (err) {

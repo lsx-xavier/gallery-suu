@@ -19,7 +19,9 @@ export function ThumbGallery({ folderId, onSelect }: ThumbGalleryProps) {
 
   const [selectedPhotos, setSelectedPhotos] = useState<string>('');
   const selectedNamePhotoBounced = useDebounce(selectedPhotos, 800);
-  const [selectedPhoto, setSelectedPhoto] = useState<{webContentLink: string, name: string} | undefined>(undefined);
+  const [selectedPhoto, setSelectedPhoto] = useState<
+    { webContentLink: string; name: string } | undefined
+  >(undefined);
   const [isLoadingSelectedPhoto, setIsLoadingSelectedPhoto] = useState(false);
 
   useEffect(() => {
@@ -47,8 +49,8 @@ export function ThumbGallery({ folderId, onSelect }: ThumbGalleryProps) {
     );
 
     setSelectedPhoto({
-        webContentLink: findedPhoto.webContentLink.replaceAll('=download', '=view'),
-        name: findedPhoto.name
+      webContentLink: findedPhoto.webContentLink.replaceAll('=download', '=view'),
+      name: findedPhoto.name,
     });
     onSelect(findedPhoto.webContentLink.replaceAll('=download', '=view'));
 

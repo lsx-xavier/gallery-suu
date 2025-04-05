@@ -1,36 +1,35 @@
-import { redis } from "@/config/redis";
-import { hashPassword } from "@/utils/encrypt-decrypt";
-import { checkIfFolderExists } from "./helpers";
+import { redis } from '@/config/redis';
+import { hashPassword } from '@/utils/encrypt-decrypt';
+import { checkIfFolderExists } from './helpers';
 
 export default async function createUserToFolder(folders: string[], user: string, pass: string) {
   try {
-    const foldersWithoutCreate = folders.filter(folder => folder !== 'create');
-    console.log({ foldersWithoutCreate })
-
+    const foldersWithoutCreate = folders.filter((folder) => folder !== 'create');
+    console.log({ foldersWithoutCreate });
 
     const folderData = await checkIfFolderExists(foldersWithoutCreate);
 
     if (!folderData) {
       console.log('[create-user-to-folder] Folder not found');
       throw {
-        message: "Folder not found",
-        status: 404
-      }
+        message: 'Folder not found',
+        status: 404,
+      };
     }
 
     const encryptPass = await hashPassword(pass);
     const acccountJson = { user: user, pass: encryptPass };
 
     const redisAuthKey = `auth:${foldersWithoutCreate.join(':')}`;
-    console.log({ redisAuthKey })
+    console.log({ redisAuthKey });
     await redis.hset(redisAuthKey, acccountJson);
 
     await redis.hset('auth:status', {
       lastFolder: redisAuthKey,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
-    return "Conta criada, pode passar para o cliente!";
+    return 'Conta criada, pode passar para o cliente!';
     // const drive = googleApi.drive({ version: "v3", auth: googleAuth });
 
     // const queryToFolders = `mimeType = 'application/vnd.google-apps.folder' and name = '${folderName.replaceAll("-", " ")}'`;
@@ -48,7 +47,6 @@ export default async function createUserToFolder(folders: string[], user: string
 
     //   return resp.data.files?.[0] || undefined;
     // });
-
 
     // if(!maybeFolderId) {
     //   throw new Error("Didn't find the folder");
@@ -111,7 +109,7 @@ export default async function createUserToFolder(folders: string[], user: string
   } catch (error) {
     throw {
       message: `Can't create the account: ${error}`,
-      status: 500
-    }
+      status: 500,
+    };
   }
 }

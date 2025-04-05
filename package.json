@@ -6,7 +6,8 @@
     "dev": "next  dev --turbopack --experimental-https",
     "build": "prisma generate --no-engine && next build",
     "start": "next start",
-    "lint:check": "prettier --check .",
+    "prettier:check": "prettier --check .",
+    "prettier:fix": "prettier --write .",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix"
   },

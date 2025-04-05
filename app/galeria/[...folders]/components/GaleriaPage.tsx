@@ -6,41 +6,47 @@ import Masonry from 'react-masonry-css';
 
 type GaleriaPageProps = {
   params: Promise<{
-    folderName: string[]
-  }>
-}
+    folderName: string[];
+  }>;
+};
 
-export default function GaleriaPage({params}: GaleriaPageProps) {
-  const {folderName} = React.use(params);
-  const [images, setImages] = useState(undefined)
-  const [nextPage, setNextPage] = useState(undefined)
-  const [isFetching, setIsFetching] = useState(false)
+export default function GaleriaPage({ params }: GaleriaPageProps) {
+  const { folderName } = React.use(params);
+  const [images, setImages] = useState(undefined);
+  const [nextPage, setNextPage] = useState(undefined);
+  const [isFetching, setIsFetching] = useState(false);
 
-  const fetchImages = useCallback(async (nextPageProps?: string) => {
-    if(!folderName) return;
-    setIsFetching(true)
+  const fetchImages = useCallback(
+    async (nextPageProps?: string) => {
+      if (!folderName) return;
+      setIsFetching(true);
 
-    let url = `/api/get-images-from?limit=30`
-    if(nextPageProps) {
-      url = url.concat(`&nextPageToken=${nextPageProps}`)
-    }
-    if(folderName.length > 1) {
-      url = url.concat(`&parentFolder=${folderName[0]}&targetFolder=${folderName[folderName.length - 1]}`)
-    } else {
-      url = url.concat(`&targetFolder=${folderName[0]}`)
-    }
+      let url = `/api/get-images-from?limit=30`;
+      if (nextPageProps) {
+        url = url.concat(`&nextPageToken=${nextPageProps}`);
+      }
+      if (folderName.length > 1) {
+        url = url.concat(
+          `&parentFolder=${folderName[0]}&targetFolder=${folderName[folderName.length - 1]}`,
+        );
+      } else {
+        url = url.concat(`&targetFolder=${folderName[0]}`);
+      }
 
-    const {imageFiles, nextPageToken} = await fetch(url, {
-      cache: "force-cache"
-    }).then(resp => resp.json());
+      const { imageFiles, nextPageToken } = await fetch(url, {
+        cache: 'force-cache',
+      }).then((resp) => resp.json());
 
-    setIsFetching(false);
-    setNextPage(nextPageToken)
-    setImages((prev => [...(prev||[]), ...imageFiles]))
-  }, [folderName])
-  
+      setIsFetching(false);
+      setNextPage(nextPageToken);
+      setImages((prev) => [...(prev || []), ...imageFiles]);
+    },
+    [folderName],
+  );
 
-  useEffect(() => {fetchImages()},[fetchImages])
+  useEffect(() => {
+    fetchImages();
+  }, [fetchImages]);
 
   const rowVirtualizer = useVirtualizer({
     count: (images || []).length,
@@ -52,13 +58,13 @@ export default function GaleriaPage({params}: GaleriaPageProps) {
   useEffect(() => {
     const lastItem = rowVirtualizer.getVirtualItems().at(-1);
     if (!lastItem && !images) return;
-    console.log(lastItem)
-    console.log(images?.length - 1)
-  
+    console.log(lastItem);
+    console.log(images?.length - 1);
+
     const isAtBottom = lastItem?.index >= images.length - 1;
-  
+
     if (isAtBottom && !isFetching) {
-      fetchImages(nextPage)
+      fetchImages(nextPage);
     }
   }, [fetchImages, images, isFetching, nextPage, rowVirtualizer]);
 
@@ -66,39 +72,39 @@ export default function GaleriaPage({params}: GaleriaPageProps) {
     default: 4,
     1024: 3,
     768: 2,
-    640: 1
+    640: 1,
   };
 
-  if(!images) return null;
-  
+  if (!images) return null;
+
   return (
     <Masonry
-    breakpointCols={breakpointColumns}
-    className="flex gap-4"
-    columnClassName="flex flex-col gap-4"
-    style={{
-      height: rowVirtualizer.getTotalSize(), // Altura total da lista
-    }}
+      breakpointCols={breakpointColumns}
+      className="flex gap-4"
+      columnClassName="flex flex-col gap-4"
+      style={{
+        height: rowVirtualizer.getTotalSize(), // Altura total da lista
+      }}
     >
-      {rowVirtualizer.getVirtualItems().map((virtualRow) =>
-        <div key={virtualRow.key} className='relative break-inside-avoid' >
+      {rowVirtualizer.getVirtualItems().map((virtualRow) => (
+        <div key={virtualRow.key} className="relative break-inside-avoid">
           <Image
-            src={(images[virtualRow.index]?.webContentLink as string).split("&export=download")[0]}
+            src={(images[virtualRow.index]?.webContentLink as string).split('&export=download')[0]}
             alt={images[virtualRow.index]?.name}
             className='"w-full rounded-lg !relative !h-[auto]'
             objectFit="cover"
-            loading='lazy'
+            loading="lazy"
             width={1920}
             height={1080}
             quality={50}
             style={{
-              maxWidth: "100%",
-              height: "auto",
+              maxWidth: '100%',
+              height: 'auto',
             }}
             placeholder={`data:image/svg+xml;base64,${ShimmerImage(1920, 1080)}`}
           />
         </div>
-      )}
+      ))}
     </Masonry>
-  )
+  );
 }

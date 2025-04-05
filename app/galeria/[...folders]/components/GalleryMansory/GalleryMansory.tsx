@@ -148,16 +148,14 @@ export function GalleryMansory({ folders }: FolderRouterDto) {
     [folders],
   );
 
-  if (isEmpty){
+  if (isEmpty) {
     return (
       <div className="flex flex-col justify-center items-center h-screen gap-4">
         <h1 className="text-2xl font-bold">
           Suas fotos estão sendo tratadas com carinho, por favor, tente novamente mais tarde.
           conosco.
         </h1>
-        <p className="text-sm text-gray-500">
-          Se o erro persistir, entre em contato conosco.
-        </p>
+        <p className="text-sm text-gray-500">Se o erro persistir, entre em contato conosco.</p>
       </div>
     );
   }
@@ -168,9 +166,7 @@ export function GalleryMansory({ folders }: FolderRouterDto) {
         <h1 className="text-2xl font-bold">
           Ocorreu um erro ao carregar as fotos, por favor, tente novamente.
         </h1>
-        <p className="text-sm text-gray-500">
-          Se o erro persistir, entre em contato conosco.
-        </p>
+        <p className="text-sm text-gray-500">Se o erro persistir, entre em contato conosco.</p>
         <Button onClick={() => fetchImages()}>Tentar novamente</Button>
       </div>
     );
@@ -246,7 +242,10 @@ export function GalleryMansory({ folders }: FolderRouterDto) {
 
       {isFetching &&
         Array.from({ length: 18 }).map((_, index) => (
-          <div key={index} className="relative break-inside-avoid aspect-square aspect-w-1 aspect-h-1 rounded-lg overflow-hidden">
+          <div
+            key={index}
+            className="relative break-inside-avoid aspect-square aspect-w-1 aspect-h-1 rounded-lg overflow-hidden"
+          >
             <ShimmerComponent w={1920} h={1080} />
           </div>
         ))}

@@ -1,24 +1,27 @@
-'use client'
-import { useVirtualizer } from "@tanstack/react-virtual";
-import Image from "next/image";
-import { useCallback, useEffect, useRef, useState } from "react";
+'use client';
+import { useVirtualizer } from '@tanstack/react-virtual';
+import Image from 'next/image';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 export default function Home() {
-  const [images,setImages] = useState([])
-  const [nextPageToken,setNextPageToken] = useState("")
+  const [images, setImages] = useState([]);
+  const [nextPageToken, setNextPageToken] = useState('');
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
 
   const fetchImages = useCallback(async () => {
     if (loading || !hasMore) return; // Evita múltiplos requests simultâneos
     setLoading(true);
-    const {imageFiles, nextPageToken: newNextPageToken} = await fetch(`/api/get-images?pageToken=${nextPageToken}&limit=10&folderName=Suellen, Leonel e Luisa`, {
-      cache: "force-cache"
-    }).then(resp => resp.json());
-    
-    setImages((prev)=> [...prev, ...(imageFiles as [])]);
+    const { imageFiles, nextPageToken: newNextPageToken } = await fetch(
+      `/api/get-images?pageToken=${nextPageToken}&limit=10&folderName=Suellen, Leonel e Luisa`,
+      {
+        cache: 'force-cache',
+      },
+    ).then((resp) => resp.json());
 
-    setNextPageToken(newNextPageToken)
+    setImages((prev) => [...prev, ...(imageFiles as [])]);
+
+    setNextPageToken(newNextPageToken);
 
     // Verifica se há mais imagens para carregar
     if (!newNextPageToken) {
@@ -29,10 +32,10 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    fetchImages()
-  }, [])
+    fetchImages();
+  }, []);
 
-  const parentRef = useRef<HTMLDivElement>(null)
+  const parentRef = useRef<HTMLDivElement>(null);
   const rowVirtualizer = useVirtualizer({
     count: images.length,
     getScrollElement: () => parentRef.current,
@@ -46,44 +49,52 @@ export default function Home() {
     }
   };
 
-
   return (
-    <div ref={parentRef} onScroll={onScroll} style={{
-      overflow: "auto",
-      position: "relative",
-    }}>
-       <div
+    <div
+      ref={parentRef}
+      onScroll={onScroll}
+      style={{
+        overflow: 'auto',
+        position: 'relative',
+      }}
+    >
+      <div
         style={{
           height: rowVirtualizer.getTotalSize(),
-          width: "100%",
-          position: "relative",
+          width: '100%',
+          position: 'relative',
         }}
       >
         {rowVirtualizer.getVirtualItems().map((virtualItem) => (
           <div
             key={virtualItem.index}
             style={{
-              position: "absolute",
+              position: 'absolute',
               top: virtualItem.start,
-              width: "100%",
-              height: "100px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              border: "1px solid #ddd",
-              marginBottom: "8px",
+              width: '100%',
+              height: '100px',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              border: '1px solid #ddd',
+              marginBottom: '8px',
             }}
-            >
-              
-              
-              <Image key={images[virtualItem.index]?.id} src={(images[virtualItem.index]?.webContentLink as string).split("&export=download")[0]} alt={images[virtualItem.index]?.name} fill style={{objectFit: "contain"}} />
-           {/* <Image key={images[virtualItem.index]?.id} src={`data:image/jpeg;base64,${images[virtualItem.index]?.image}`} alt="" fill style={{objectFit: "contain"}}/> */}
-           </div>
-          ))}
+          >
+            <Image
+              key={images[virtualItem.index]?.id}
+              src={
+                (images[virtualItem.index]?.webContentLink as string).split('&export=download')[0]
+              }
+              alt={images[virtualItem.index]?.name}
+              fill
+              style={{ objectFit: 'contain' }}
+            />
+            {/* <Image key={images[virtualItem.index]?.id} src={`data:image/jpeg;base64,${images[virtualItem.index]?.image}`} alt="" fill style={{objectFit: "contain"}}/> */}
           </div>
-          {loading && <div>Carregando...</div>}
-          {!hasMore && <div>Não há mais imagens.</div>}
-      
+        ))}
+      </div>
+      {loading && <div>Carregando...</div>}
+      {!hasMore && <div>Não há mais imagens.</div>}
     </div>
   );
 }

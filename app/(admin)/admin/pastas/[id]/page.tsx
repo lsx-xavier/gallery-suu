@@ -1,9 +1,5 @@
+import { ModalConfigurar } from '../components/ModalConfigurar';
 
-import { ModalConfigurar } from "../components/ModalConfigurar";
-
-export default function Page() {    
-    
-    return (
-        <ModalConfigurar />
-    );
+export default function Page() {
+  return <ModalConfigurar />;
 }

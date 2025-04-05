@@ -1,16 +1,16 @@
-import { redis } from "@/config/redis";
-import { NextResponse } from "next/server";
+import { redis } from '@/config/redis';
+import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
     const status = await redis.hgetall('crawler:status');
     const all = await redis.keys('folder:*');
-    console.log({ all }, all.length)
-    console.log(all.find(i => i.includes('folder:keiti-e-diogo')))
+    console.log({ all }, all.length);
+    console.log(all.find((i) => i.includes('folder:keiti-e-diogo')));
 
     const especifcFolder = await redis.hgetall('folder:keiti-e-diogo:natal-2023');
 
-    console.log({especifcFolder})
+    console.log({ especifcFolder });
 
     return NextResponse.json({ lastSaved: status, folders: all });
   } catch (err) {

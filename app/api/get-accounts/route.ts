@@ -1,6 +1,5 @@
-import getAllAccounts from "@/app/services/get-accounts";
-import { NextResponse } from "next/server";
-
+import getAllAccounts from '@/app/services/get-accounts';
+import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
@@ -10,7 +9,7 @@ export async function GET() {
     console.log(allAccounts);
 
     if (!allAccounts) {
-      return NextResponse.json({ error: "Nenhum usuário encontrado" }, { status: 404  });
+      return NextResponse.json({ error: 'Nenhum usuário encontrado' }, { status: 404 });
     }
 
     return NextResponse.json(allAccounts, { status: 200 });

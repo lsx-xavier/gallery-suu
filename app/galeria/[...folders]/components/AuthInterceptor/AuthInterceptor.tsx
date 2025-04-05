@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import { authToken } from '@/config/AuthToken';
 import { FolderRouteParams } from '@/entities/folder';
 import { getTokenCookie } from '@/utils/get-token-cookie';
@@ -11,46 +11,46 @@ import { AuthInterceptorProps } from './Types';
 const RenderPage = ({ statePage, folders, handleSetStatePage }: AuthInterceptorProps) => {
   switch (statePage) {
     case 'create':
-      return <FormCreateUser folders={folders} />
+      return <FormCreateUser folders={folders} />;
     case 'gallery':
-      return <GalleryMansory folders={folders} />
+      return <GalleryMansory folders={folders} />;
     default:
-      return <AuthForm folders={folders} onSuccess={() => handleSetStatePage('gallery')} />
+      return <AuthForm folders={folders} onSuccess={() => handleSetStatePage('gallery')} />;
   }
-}
+};
 
 export function AuthInterceptor({ params }: FolderRouteParams) {
   const [isLoading, setIsLoading] = useState(true);
-  const [statePage, setStatePage] = useState<'create' | 'auth' | 'gallery'>('auth')
-  const [folders, setFolders] = useState<string[]>([])
+  const [statePage, setStatePage] = useState<'create' | 'auth' | 'gallery'>('auth');
+  const [folders, setFolders] = useState<string[]>([]);
 
   const handleSetStatePage = useCallback((state: 'create' | 'auth' | 'gallery') => {
-    setStatePage(state)
-    setIsLoading(false)
-  }, [])
+    setStatePage(state);
+    setIsLoading(false);
+  }, []);
 
   const checkAuth = useCallback(async () => {
     const { folders } = await params;
-    setFolders(folders)
+    setFolders(folders);
 
     if (folders[folders.length - 1] === 'create') {
-      handleSetStatePage('create')
-      return
+      handleSetStatePage('create');
+      return;
     }
 
-    const maybeToken = await getTokenCookie()
+    const maybeToken = await getTokenCookie();
     if (!maybeToken) {
-      handleSetStatePage('auth')
-      return
+      handleSetStatePage('auth');
+      return;
     }
 
-    const isTokenValid = await authToken.verifyToken(maybeToken)
+    const isTokenValid = await authToken.verifyToken(maybeToken);
 
     if (!isTokenValid) {
-      handleSetStatePage('auth')
-      return
+      handleSetStatePage('auth');
+      return;
     } else {
-      handleSetStatePage('gallery')
+      handleSetStatePage('gallery');
       return;
     }
   }, [handleSetStatePage, params]);
@@ -63,5 +63,7 @@ export function AuthInterceptor({ params }: FolderRouteParams) {
     return <div>Carregando...</div>;
   }
 
-  return <RenderPage statePage={statePage} folders={folders} handleSetStatePage={handleSetStatePage} />;
+  return (
+    <RenderPage statePage={statePage} folders={folders} handleSetStatePage={handleSetStatePage} />
+  );
 }

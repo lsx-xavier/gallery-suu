@@ -1,18 +1,16 @@
-import { crawlerTheFolders } from "@/app/services/crawler";
+import { crawlerTheFolders } from '@/app/services/crawler';
 
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
-    console.log('[crawler-API] Start')
+    console.log('[crawler-API] Start');
 
-    crawlerTheFolders(
-      (message) => console.log(message)
-    )
+    crawlerTheFolders((message) => console.log(message))
       .then(() => {
         console.log('[API] Crawler completed successfully');
       })
-      .catch(error => {
+      .catch((error) => {
         console.error('[API] Crawler error:', error);
       });
 
@@ -20,7 +18,7 @@ export async function GET() {
       status: 200,
     });
   } catch (error) {
-    console.log('[crawler-API] Get some error', error)
+    console.log('[crawler-API] Get some error', error);
     return NextResponse.json({ error: '[crawler-API] Get some error' }, { status: 500 });
   }
 }

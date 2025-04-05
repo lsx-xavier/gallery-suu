@@ -5,7 +5,7 @@ export default async function getAllAccounts() {
     const allAccounts = await prisma.users.findMany();
 
     return allAccounts;
-  } catch  {
+  } catch {
     throw {
       message: 'Error getting all accounts',
       status: 500,

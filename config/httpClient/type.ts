@@ -1,4 +1,4 @@
-import { SuperAgentRequest } from "superagent";
+import { SuperAgentRequest } from 'superagent';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export type HttpsMethods = 'get' | 'post' | 'put' | 'delete';
@@ -6,7 +6,7 @@ export type HttpsMethods = 'get' | 'post' | 'put' | 'delete';
 export interface DefaultHttpsDTO {
   url: string;
 
-  moreOptions?: (req: SuperAgentRequest) => SuperAgentRequest
+  moreOptions?: (req: SuperAgentRequest) => SuperAgentRequest;
 }
 
 export interface HttpsGetDTO extends DefaultHttpsDTO {

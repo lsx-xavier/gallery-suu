@@ -5,8 +5,8 @@ export interface ImageDto {
   webViewLink: string;
 
   imageMediaMetadata?: {
-    width: string,
-    height: string,
-    rotation: string,
+    width: string;
+    height: string;
+    rotation: string;
   };
 }

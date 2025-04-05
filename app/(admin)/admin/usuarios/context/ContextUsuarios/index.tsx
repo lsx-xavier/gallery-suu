@@ -4,8 +4,8 @@ import { Prisma } from '@prisma/client';
 import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react';
 import { getAllUsers } from '../../action';
 
-export type UserWithFolders =  Prisma.UsersGetPayload<{
-  include: { folders: true }
+export type UserWithFolders = Prisma.UsersGetPayload<{
+  include: { folders: true };
 }>;
 
 interface UsuariosContextData {
@@ -35,7 +35,6 @@ export function UsuariosProvider({ children }: { children: ReactNode }) {
     fetchUsuarios().finally(() => setLoading(false));
   }, [fetchUsuarios]);
 
-
   return (
     <UsuariosContext.Provider
       value={{
@@ -55,4 +54,4 @@ export function useUsuarios() {
     throw new Error('useUsuarios must be used within a UsuariosProvider');
   }
   return context;
-} 
+}

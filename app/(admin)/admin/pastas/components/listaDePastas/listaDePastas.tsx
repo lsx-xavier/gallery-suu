@@ -18,7 +18,7 @@ export function ListaDePastas({ allFolders }: { allFolders: FolderWithHierarchy 
         placeholder="Pesquisar"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-    />
+      />
 
       <div>
         {Object.entries(allFolders)
@@ -31,14 +31,20 @@ export function ListaDePastas({ allFolders }: { allFolders: FolderWithHierarchy 
                 <h3 className="text-sm font-bold">{folder[0].parentName}</h3>
               </div>
               <div className="flex flex-col">
-              {folder
-                .filter((f) => f.folderName.toLowerCase().includes(term.toLowerCase()))
-                .map((f) => (
-                  <Link href={`/admin/pastas/${f.id}`} key={f.id} className="flex items-center aspect-square">
-                    <Image src={f.thumbId} alt={f.folderName} width={100} height={100} />
-                    <h5 className="text-sm font-bold absolute bottom-0 left-0 bg-black/50 text-white p-2">{f.folderName}</h5>
-                  </Link>
-                ))}
+                {folder
+                  .filter((f) => f.folderName.toLowerCase().includes(term.toLowerCase()))
+                  .map((f) => (
+                    <Link
+                      href={`/admin/pastas/${f.id}`}
+                      key={f.id}
+                      className="flex items-center aspect-square"
+                    >
+                      <Image src={f.thumbId} alt={f.folderName} width={100} height={100} />
+                      <h5 className="text-sm font-bold absolute bottom-0 left-0 bg-black/50 text-white p-2">
+                        {f.folderName}
+                      </h5>
+                    </Link>
+                  ))}
               </div>
             </div>
           ))}

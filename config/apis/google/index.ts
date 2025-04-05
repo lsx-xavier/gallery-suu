@@ -9,8 +9,8 @@ export async function GoogleAuthApi() {
   const googleAuth = new google.auth.GoogleAuth({
     credentials: credentials,
     scopes: [
-      "https://www.googleapis.com/auth/drive.readonly",
-      "https://www.googleapis.com/auth/drive.file"
+      'https://www.googleapis.com/auth/drive.readonly',
+      'https://www.googleapis.com/auth/drive.file',
     ],
   });
   // console.log("googleAuth", googleAuth)
@@ -22,29 +22,31 @@ export const googleApi = google;
 
 export async function driveWithAuth() {
   const auth = await GoogleAuthApi();
-  const drive = googleApi.drive({ version: "v3", auth });
+  const drive = googleApi.drive({ version: 'v3', auth });
 
   return drive;
+}
+
+export type GetFoldersByIdOrQueryProps = {
+  folderId?: string;
+  query?: string;
+  fields?: string;
+  resParams?: drive_v3.Params$Resource$Files$List;
 };
 
-export type GetFoldersByIdOrQueryProps = { folderId?: string, query?: string, fields?: string, resParams?: drive_v3.Params$Resource$Files$List }
-
-export async function getFoldersByIdOrQuery(
-  {
-    folderId,
-    query,
-    fields = "files(id, name)",
-    resParams
-  }: GetFoldersByIdOrQueryProps) {
-
-
+export async function getFoldersByIdOrQuery({
+  folderId,
+  query,
+  fields = 'files(id, name)',
+  resParams,
+}: GetFoldersByIdOrQueryProps) {
   if (!query) {
     if (!folderId) {
       throw {
         message: `Need to past the FolderId, if you didn't pass the query`,
-        status: 500
-      }
-    };
+        status: 500,
+      };
+    }
   }
 
   const drive = await driveWithAuth();
@@ -52,32 +54,36 @@ export async function getFoldersByIdOrQuery(
   if (!drive) {
     throw {
       message: `Get some error with the drive`,
-      status: 500
-    }
+      status: 500,
+    };
   }
 
-  const queryString = query ?? `'${folderId}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`;
+  const queryString =
+    query ??
+    `'${folderId}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`;
 
+  const files = await drive.files
+    .list({
+      q: queryString,
+      fields: fields,
+      ...resParams,
+    })
+    .then((res) => {
+      if (!res) {
+        console.error("Didn't get response from the drive list");
+        return [];
+      }
 
-  const files = await drive.files.list({
-    q: queryString,
-    fields: fields,
-    ...resParams
-  }).then((res) => {
-    if (!res) {
-      console.error('Didn\'t get response from the drive list');
-      return [];
-    }
+      if (!res.data.files || res.data.files?.length === 0) {
+        console.error(`Didn't find any folders in '${folderId || query}'`);
+        return [];
+      }
 
-    if (!res.data.files || res.data.files?.length === 0) {
-      console.error(`Didn't find any folders in '${folderId || query}'`);
-      return [];
-    }
-
-    return res.data.files;
-  }).catch(err => {
-    throw err
-  });
+      return res.data.files;
+    })
+    .catch((err) => {
+      throw err;
+    });
 
   return files;
 }

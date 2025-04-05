@@ -1,5 +1,5 @@
 function Default() {
-    return null;
+  return null;
 }
 
 export default Default;

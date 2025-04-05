@@ -1,7 +1,5 @@
-'use client'
-export default  function Home() {
-  
-  
+'use client';
+export default function Home() {
   // const onClick = async () => {
   //   try {
   //     // Fazer fetch do arquivo compactado
@@ -17,7 +15,7 @@ export default  function Home() {
   //     const json = JSON.parse(new TextDecoder().decode(decompressedArrayBuffer));
 
   //     console.log(json);
-      
+
   //   } catch (error) {
   //     console.error("Erro ao carregar JSON:", error);
   //   }
@@ -25,16 +23,13 @@ export default  function Home() {
   const onClick = async () => {
     try {
       // Fazer fetch do arquivo compactado
-      const response = await fetch(`/api/get-images-from?targetFolder=natal 2023&parentFolder=keiti e diogo`).then(resp => resp.json());
-      
-      
+      const response = await fetch(
+        `/api/get-images-from?targetFolder=natal 2023&parentFolder=keiti e diogo`,
+      ).then((resp) => resp.json());
     } catch (error) {
-      console.error("Erro ao carregar JSON:", error);
+      console.error('Erro ao carregar JSON:', error);
     }
   };
 
-
-  return (
-    <button onClick={() => onClick()}>Show the json</button>
-  );
+  return <button onClick={() => onClick()}>Show the json</button>;
 }

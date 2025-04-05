@@ -12,7 +12,7 @@ import { Button } from '@/app/_shared/components/Button';
 export type SelectedInfos = {
   users: Users['id'][] | undefined;
   photo: string | undefined;
-}
+};
 
 export function ModalConfigurar() {
   const router = useRouter();
@@ -22,9 +22,10 @@ export function ModalConfigurar() {
   const [folder, setFolder] = useState<FoldersWithUsers | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-
-  const [selectedUsers, setSelectedUsers  ] = useState<{[id: string]: boolean}[] | undefined>(undefined);
-  console.log({selectedUsers});
+  const [selectedUsers, setSelectedUsers] = useState<{ [id: string]: boolean }[] | undefined>(
+    undefined,
+  );
+  console.log({ selectedUsers });
 
   const [selectedPhoto, setSelectedPhoto] = useState<string | undefined>(undefined);
 
@@ -76,16 +77,22 @@ export function ModalConfigurar() {
       <div className="flex justify-end gap-2">
         <Button
           onClick={() => router.back()}
-          variant='outline'
-          size='sm'
-          className='border-gray-500 text-gray-500 opacity-60 hover:opacity-100'>Voltar</Button>
+          variant="outline"
+          size="sm"
+          className="border-gray-500 text-gray-500 opacity-60 hover:opacity-100"
+        >
+          Voltar
+        </Button>
 
         <Button
           onClick={handleSave}
           disabled={isLoading}
-          variant='outline'
-          size='sm'
-          className='border-orange-400 text-orange-400 opacity-60 hover:opacity-100'>Salvar</Button>
+          variant="outline"
+          size="sm"
+          className="border-orange-400 text-orange-400 opacity-60 hover:opacity-100"
+        >
+          Salvar
+        </Button>
       </div>
     </div>
   );

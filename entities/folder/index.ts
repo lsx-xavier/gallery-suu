@@ -1,15 +1,15 @@
 export interface Folder {
   id: string;
   name: string;
-  child?: Folder[]
+  child?: Folder[];
 }
 
 export interface FolderRouterDto {
-  folders: string[]
+  folders: string[];
 }
 
 export interface FolderRouteParams {
-  params: Promise<FolderRouterDto>
+  params: Promise<FolderRouterDto>;
 }
 
-export type TokenFolderPage = string | undefined
+export type TokenFolderPage = string | undefined;

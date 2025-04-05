@@ -1,1 +1,1 @@
-export * from "./get-token-cookie";
+export * from './get-token-cookie';

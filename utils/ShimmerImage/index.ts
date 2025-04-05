@@ -1,1 +1,1 @@
-export * from "./ShimmerImage";
+export * from './ShimmerImage';

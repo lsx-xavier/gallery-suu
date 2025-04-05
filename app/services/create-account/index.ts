@@ -1,41 +1,40 @@
 import prisma from '@/config/primsa';
 import { Users } from '@prisma/client';
 
-export type RequestCreateAccountDto = Pick<Users, 'userName' | 'password' | 'role'>
+export type RequestCreateAccountDto = Pick<Users, 'userName' | 'password' | 'role'>;
 
 export default async function createAccount(data: Partial<RequestCreateAccountDto>) {
   try {
-    if(!data.userName || !data.password) {
-        throw {
-            message: 'Username and password are required',
-            status: 400,
-        };
+    if (!data.userName || !data.password) {
+      throw {
+        message: 'Username and password are required',
+        status: 400,
+      };
     }
 
     const maybeHasAccount = await prisma.users.findFirst({
-        where: {
-            userName: data.userName
-        }
+      where: {
+        userName: data.userName,
+      },
     });
 
-    if(maybeHasAccount) {
-        throw {
-            message: 'Account already exists',
-            status: 400,
-        };
+    if (maybeHasAccount) {
+      throw {
+        message: 'Account already exists',
+        status: 400,
+      };
     }
 
     const newAccount = await prisma.users.create({
-        data: {
-            userName: data.userName,
-            password: data.password,
-            role: 'USER',
-        }
+      data: {
+        userName: data.userName,
+        password: data.password,
+        role: 'USER',
+      },
     });
-    
 
     return newAccount;
-  } catch  {
+  } catch {
     throw {
       message: 'Error creating account',
       status: 500,
