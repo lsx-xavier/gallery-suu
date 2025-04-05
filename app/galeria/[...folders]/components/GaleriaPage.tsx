@@ -1,4 +1,4 @@
-import { ShimmerImage } from '@/utils/ShimmerImage';
+import { ShimmerImage } from '@/(infra)/utils/shimmer-image';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import Image from 'next/image';
 import React, { useCallback, useEffect, useState } from 'react';

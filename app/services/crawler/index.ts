@@ -1,5 +1,5 @@
-import { getFoldersByIdOrQuery } from '@/config/apis/google';
-import { createSlug } from '@/utils/create-slug';
+import { getFoldersByIdOrQuery } from '@/(infra)/config/apis/google';
+import { createSlug } from '@/(infra)/utils/create-slug';
 import { maybeSaveToMongoDb, processFolderStructure } from './helper';
 import { FolderStructure, OnProgress } from './types';
 

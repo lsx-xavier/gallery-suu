@@ -1,7 +1,6 @@
 'use client';
-import { authToken } from '@/config/AuthToken';
-import { FolderRouteParams } from '@/entities/folder';
-import { getTokenCookie } from '@/utils/get-token-cookie';
+import { authToken } from '@/(infra)/config/AuthToken';
+import { getTokenCookie } from '@/(infra)/utils/get-token-cookie';
 import { useCallback, useEffect, useState } from 'react';
 import { AuthForm } from '../AuthForm';
 import { FormCreateUser } from '../CreateUserForm';
@@ -19,7 +18,7 @@ const RenderPage = ({ statePage, folders, handleSetStatePage }: AuthInterceptorP
   }
 };
 
-export function AuthInterceptor({ params }: FolderRouteParams) {
+export function AuthInterceptor({ params }: { params: Promise<{ folders: string[] }> }) {
   const [isLoading, setIsLoading] = useState(true);
   const [statePage, setStatePage] = useState<'create' | 'auth' | 'gallery'>('auth');
   const [folders, setFolders] = useState<string[]>([]);
