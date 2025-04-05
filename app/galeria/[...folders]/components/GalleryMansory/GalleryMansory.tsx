@@ -1,7 +1,7 @@
 'use client';
 import { Button } from '@/app/_shared/components';
 import Modal from '@/app/_shared/components/Modal';
-import PortfolioGallery from '@/app/_shared/components/portfolio/portfolio-gallery';
+
 import httpClient from '@/config/httpClient';
 import { FolderRouterDto, TokenFolderPage } from '@/entities/folder';
 import { ImageDto } from '@/entities/image';
@@ -101,11 +101,11 @@ export function GalleryMansory({ folders }: FolderRouterDto) {
     ' - ' +
     folders[folders.length - 1].replaceAll('-', ' ').replace(/\b\w/g, (char) => char.toUpperCase());
 
-  const handleNextPageOfImages = useCallback(async () => {
-    if (!isFetching && nextPage) {
-      await fetchImages(nextPage);
-    }
-  }, [fetchImages, nextPage, isFetching]);
+  // const handleNextPageOfImages = useCallback(async () => {
+  //   if (!isFetching && nextPage) {
+  //     await fetchImages(nextPage);
+  //   }
+  // }, [fetchImages, nextPage, isFetching]);
 
   const [isDownloading, setIsDownloading] = useState<'single' | 'all' | undefined>(undefined);
   const handleDownloadPhoto = useCallback(
@@ -230,11 +230,12 @@ export function GalleryMansory({ folders }: FolderRouterDto) {
               />
             }
             content={
-              <PortfolioGallery
-                fetchNextImages={handleNextPageOfImages}
-                listOfImages={images || []}
-                currentImage={images?.[virtualRow.index] || undefined}
-              />
+              <></>
+              // <PortfolioGallery
+              //   fetchNextImages={handleNextPageOfImages}
+              //   listOfImages={images || []}
+              //   currentImage={images?.[virtualRow.index] || undefined}
+              // />
             }
           />
         </div>
