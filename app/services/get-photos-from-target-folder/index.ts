@@ -1,6 +1,6 @@
-import { driveWithAuth } from '@/src/config/apis/google';
-import prisma from '@/src/config/primsa';
-import { createSlug } from '@/src/utils/create-slug';
+import { driveWithAuth } from '@/(infra)/config/apis/google';
+import prisma from '@/(infra)/config/primsa';
+import { createSlug } from '@/(infra)/utils/create-slug';
 
 export default async function getPhotosFromTargetFolder(
   foldersToSearch: string | null,

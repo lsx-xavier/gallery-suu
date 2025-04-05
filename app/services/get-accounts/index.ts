@@ -1,4 +1,4 @@
-import prisma from '@/src/config/primsa';
+import prisma from '@/(infra)/config/primsa';
 
 export default async function getAllAccounts() {
   try {

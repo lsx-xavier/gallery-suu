@@ -1,6 +1,6 @@
-import { driveWithAuth } from '@/src/config/apis/google';
-import { redis } from '@/src/config/redis';
-import { createSlug } from '@/src/utils/create-slug';
+import { driveWithAuth } from '@/(infra)/config/apis/google';
+import { redis } from '@/(infra)/config/redis';
+import { createSlug } from '@/(infra)/utils/create-slug';
 import JSZip from 'jszip';
 
 type DownloadImagesProps = {

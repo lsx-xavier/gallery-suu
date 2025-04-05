@@ -1,4 +1,4 @@
-import httpClient from '@/src/config/httpClient';
+import httpClient from '@/(infra)/config/httpClient';
 
 export const edgeConfig = {
   async get<T>(restUrl: string): Promise<T> {

@@ -1,4 +1,4 @@
-import { redis } from '@/src/config/redis';
+import { redis } from '@/(infra)/config/redis';
 
 export default async function getAllFoldersOfParent() {
   try {

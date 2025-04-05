@@ -1,7 +1,7 @@
 'use server';
 
 import { getFolderById } from '@/app/(admin)/admin/pastas/action';
-import { driveWithAuth } from '@/src/config/apis/google';
+import { driveWithAuth } from '@/(infra)/config/apis/google';
 
 export async function getImagesByFolderPaginated(
   folderId: string,

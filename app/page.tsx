@@ -1,5 +1,5 @@
 'use client';
-import { hashPassword } from '@/src/utils/encrypt-decrypt';
+import { hashPassword } from '@/(infra)/utils/encrypt-decrypt';
 import { useState } from 'react';
 
 export default function Page() {

@@ -1,4 +1,4 @@
-import prisma from '@/src/config/primsa';
+import prisma from '@/(infra)/config/primsa';
 import { Users } from '@prisma/client';
 
 export type RequestCreateAccountDto = Pick<Users, 'userName' | 'password' | 'role'>;

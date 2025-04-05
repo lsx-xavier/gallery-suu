@@ -2,8 +2,8 @@
 
 import { Button } from '@/app/_shared/components';
 import Modal from '@/app/_shared/components/Modal';
-import httpClient from '@/src/config/httpClient';
-import { ShimmerComponent, ShimmerImage } from '@/src/utils/shimmer-image';
+import httpClient from '@/(infra)/config/httpClient';
+import { ShimmerComponent, ShimmerImage } from '@/(infra)/utils/shimmer-image';
 import { DownloadSimple } from '@phosphor-icons/react/dist/ssr';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import Image from 'next/image';

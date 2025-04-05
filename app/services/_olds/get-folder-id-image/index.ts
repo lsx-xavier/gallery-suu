@@ -1,4 +1,4 @@
-import { redis } from '@/src/config/redis';
+import { redis } from '@/(infra)/config/redis';
 
 type GalleryFolder = {
   id: string; // ID da pasta de imagens ou webFolderId
