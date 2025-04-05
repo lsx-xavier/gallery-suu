@@ -12,13 +12,20 @@ const eslintConfig = [
       'next/typescript',
       'next/core-web-vitals',
       'plugin:@next/next/recommended',
+
       // 'plugin:jest/recommended', // for testing files
     ],
-    // settings: {
-    //   next: {
-    //     rootDir: 'packages/my-app/',
-    //   },
-    // },
+    ignorePatterns: ['node_modules', 'dist', 'build', 'public', '.next'],
+    settings: {
+      // next: {
+      //   rootDir: 'packages/my-app/',
+      // },
+      cssFilesRefreshRate: 5_000,
+      tailwindcss: {
+        callees: ['classnames'],
+        removeDuplicates: true,
+      },
+    },
   }),
 ];
 export default eslintConfig;
