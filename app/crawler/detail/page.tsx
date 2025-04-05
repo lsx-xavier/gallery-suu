@@ -23,9 +23,9 @@ export default function Home() {
   const onClick = async () => {
     try {
       // Fazer fetch do arquivo compactado
-      const response = await fetch(
-        `/api/get-images-from?targetFolder=natal 2023&parentFolder=keiti e diogo`,
-      ).then((resp) => resp.json());
+      await fetch(`/api/get-images-from?targetFolder=natal 2023&parentFolder=keiti e diogo`).then(
+        (resp) => resp.json(),
+      );
     } catch (error) {
       console.error('Erro ao carregar JSON:', error);
     }

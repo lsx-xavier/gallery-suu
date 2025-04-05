@@ -1,8 +1,6 @@
 import { redis } from '@/config/redis';
-import { Folder } from '@/entities/folder';
-import { createSlug } from '@/utils/create-slug';
 
-export default async function getAllFoldersOfParent(parent: string) {
+export default async function getAllFoldersOfParent() {
   try {
     const all = await redis.keys('folder:*');
 
@@ -17,20 +15,20 @@ export default async function getAllFoldersOfParent(parent: string) {
       };
     }
 
-    const parentSlug = createSlug(parent);
+    // const parentSlug = createSlug(parent);
 
     // Filtra os resultados pelo parentSlug
-    const childFolders = results
-      .map((data: Folder) => {
-        if (!data || data.parentSlug !== parentSlug) return null;
-        return {
-          ...data,
-        };
-      })
-      .filter(Boolean);
+    // const childFolders = results
+    //   .map((data: Folder) => {
+    //     if (!data || data.) return null;
+    //     return {
+    //       ...data,
+    //     };
+    //   })
+    //   .filter(Boolean);
 
-    return childFolders;
-  } catch (error) {
+    // return childFolders;
+  } catch {
     throw {
       message: 'Error getting all folders of parent',
       status: 500,

@@ -10,12 +10,13 @@ export function middleware(req: Request) {
 }
 
 import jwt from 'jsonwebtoken';
+import { NextResponse } from 'next/server';
 
 // Middleware para verificar JWT nas requisições
 export function verifyToken(token: string) {
   try {
     return jwt.verify(token, process.env.JWT_SECRET || 'super-secreto');
-  } catch (error) {
+  } catch {
     return null;
   }
 }

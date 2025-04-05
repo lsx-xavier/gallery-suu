@@ -1,13 +1,13 @@
 'use client';
 
-import { Folder, Users } from '@prisma/client';
+import { Button } from '@/app/_shared/components/Button';
+import { Users } from '@prisma/client';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getAllUsers, UserWithFolders } from '../../../usuarios/action';
 import { FoldersWithUsers, getFolderById, updateFolderInfos } from '../../action';
-import { UserSelection } from './UserSelection';
 import { ThumbGallery } from './ThumbGallery';
-import { Button } from '@/app/_shared/components/Button';
+import { UserSelection } from './UserSelection';
 
 export type SelectedInfos = {
   users: Users['id'][] | undefined;
