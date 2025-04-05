@@ -1,5 +1,5 @@
 'use client';
-import httpClient from '@/(infra)/config/httpClient';
+import httpClient from '@/infra/config/httpClient';
 import { FormEvent, useCallback, useState } from 'react';
 
 type AuthFormProps = {
