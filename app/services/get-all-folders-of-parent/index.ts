@@ -1,6 +1,6 @@
-import { redis } from '@/config/redis';
+import { redis } from '@/src/config/redis';
 import { Folder } from '@/entities/folder';
-import { createSlug } from '@/utils/create-slug';
+import { createSlug } from '@/src/utils/create-slug';
 
 export default async function getAllFoldersOfParent(parent: string) {
   try {

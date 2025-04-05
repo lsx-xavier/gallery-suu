@@ -1,5 +1,5 @@
 'use client';
-import useDebounce from '@/hooks/useDebounce';
+import useDebounce from '@/src/hooks/use-debounce/use-debounce';
 import { Folder } from '@prisma/client';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';

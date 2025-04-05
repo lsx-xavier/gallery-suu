@@ -1,5 +1,5 @@
 'use client';
-import httpClient from '@/config/httpClient';
+import httpClient from '@/src/config/httpClient';
 import { redirect } from 'next/navigation';
 import { FormEvent, useCallback, useState } from 'react';
 

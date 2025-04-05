@@ -1,6 +1,6 @@
 'use server';
 
-import prisma from '@/config/primsa';
+import prisma from '@/src/config/primsa';
 import { Folder, Prisma } from '@prisma/client';
 import { SelectedInfos } from './components/ModalConfigurar/ModalConfigurar';
 

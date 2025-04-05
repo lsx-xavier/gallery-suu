@@ -1,5 +1,5 @@
 'use client';
-import useDebounce from '@/hooks/useDebounce';
+import useDebounce from '@/src/hooks/use-debounce/use-debounce';
 import { FolderWithHierarchy } from '../../action';
 import { useState } from 'react';
 import Image from 'next/image';

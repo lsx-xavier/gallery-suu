@@ -1,5 +1,5 @@
-import { redis } from '@/config/redis';
-import { hashPassword } from '@/utils/encrypt-decrypt';
+import { redis } from '@/src/config/redis';
+import { hashPassword } from '@/src/utils/encrypt-decrypt';
 import { checkIfFolderExists } from './helpers';
 
 export default async function createUserToFolder(folders: string[], user: string, pass: string) {

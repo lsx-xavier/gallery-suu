@@ -1,4 +1,4 @@
-import { GoogleAuthApi } from '@/config/apis/google';
+import { GoogleAuthApi } from '@/src/config/apis/google';
 import { google } from 'googleapis';
 
 export default async function getImages(

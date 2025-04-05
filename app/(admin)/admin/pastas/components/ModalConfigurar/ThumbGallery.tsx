@@ -2,8 +2,8 @@
 
 import { getAllImagesByFolder } from '@/app/_shared/actions/get-images-by-folder/action';
 import { removeImgExtension } from '@/app/_shared/utils/remove-img-extensions';
-import useDebounce from '@/hooks/useDebounce';
-import { ShimmerImage } from '@/utils/ShimmerImage';
+import useDebounce from '@/src/hooks/use-debounce/use-debounce';
+import { ShimmerImage } from '@/src/utils/shimmer-image';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
@@ -59,10 +59,10 @@ export function ThumbGallery({ folderId, onSelect }: ThumbGalleryProps) {
 
   return (
     <div className="flex gap-2">
-      <div className="flex flex-col gap-2 w-full">
+      <div className="flex w-full flex-col gap-2">
         <h6 className="text-sm font-bold">Capa</h6>
 
-        <div className="flex gap-2 items-start">
+        <div className="flex items-start gap-2">
           <input
             id="selectedPhoto"
             type="text"
@@ -70,19 +70,19 @@ export function ThumbGallery({ folderId, onSelect }: ThumbGalleryProps) {
             value={selectedPhotos}
             placeholder="Digite o nome da foto"
             onChange={(e) => setSelectedPhotos(e.target.value)}
-            className="p-2 border border-gray-300 rounded-md"
+            className="rounded-md border border-gray-300 p-2"
           />
 
-          <div className="flex items-center justify-cente">
+          <div className="justify-cente flex items-center">
             {isLoadingSelectedPhoto && (
-              <p className="text-center text-gray-300 text-xs mt-1">Carregando Foto...</p>
+              <p className="mt-1 text-center text-xs text-gray-300">Carregando Foto...</p>
             )}
 
             {!isLoadingSelectedPhoto && selectedNamePhotoBounced.trim() !== '' && selectedPhoto ? (
               <Image
                 src={selectedPhoto.webContentLink}
                 alt={selectedPhoto.name || 'Suuk foto'}
-                className="w-auto rounded-lg !relative !h-[100px]"
+                className="!relative !h-[100px] w-auto rounded-lg"
                 objectFit="cover"
                 width={1920}
                 height={1080}
@@ -97,7 +97,7 @@ export function ThumbGallery({ folderId, onSelect }: ThumbGalleryProps) {
             ) : !isLoadingSelectedPhoto &&
               selectedNamePhotoBounced.trim() !== '' &&
               !selectedPhoto ? (
-              <p className="text-center text-red-300 text-xs mt-1">Foto não encontrada</p>
+              <p className="mt-1 text-center text-xs text-red-300">Foto não encontrada</p>
             ) : null}
           </div>
         </div>

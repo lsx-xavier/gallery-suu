@@ -1,10 +1,10 @@
-import httpClient from '@/config/httpClient';
+import httpClient from '@/src/config/httpClient';
 
 export const edgeConfig = {
   async get<T>(restUrl: string): Promise<T> {
     const response = await httpClient.get({ url: `/api/edgeStore/${restUrl}` });
 
-    return response;
+    return response as T;
   },
 
   async set(key: string, value: any) {

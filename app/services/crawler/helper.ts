@@ -1,6 +1,6 @@
-import { getFoldersByIdOrQuery } from '@/config/apis/google';
-import prisma from '@/config/primsa';
-import { createSlug } from '@/utils/create-slug';
+import { getFoldersByIdOrQuery } from '@/src/config/apis/google';
+import prisma from '@/src/config/primsa';
+import { createSlug } from '@/src/utils/create-slug';
 import { drive_v3 } from 'googleapis';
 import _ from 'lodash';
 import { FolderStructure, maybeSaveToMongoDbProps, OnProgress } from './types';

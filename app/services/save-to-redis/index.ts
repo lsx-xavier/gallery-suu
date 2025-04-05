@@ -1,4 +1,4 @@
-import { redis } from '@/config/redis';
+import { redis } from '@/src/config/redis';
 import { FolderStructure, OnProgress } from '../crawler/types';
 
 export async function saveToRedis(

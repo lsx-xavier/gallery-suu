@@ -1,7 +1,7 @@
 'use client';
-import { authToken } from '@/config/AuthToken';
+import { authToken } from '@/src/config/AuthToken';
 import { FolderRouteParams } from '@/entities/folder';
-import { getTokenCookie } from '@/utils/get-token-cookie';
+import { getTokenCookie } from '@/src/utils/get-token-cookie';
 import { useCallback, useEffect, useState } from 'react';
 import { AuthForm } from '../AuthForm';
 import { FormCreateUser } from '../CreateUserForm';

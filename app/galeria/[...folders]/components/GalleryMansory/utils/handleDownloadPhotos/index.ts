@@ -1,4 +1,4 @@
-import httpClient from '@/config/httpClient';
+import httpClient from '@/src/config/httpClient';
 
 export default function handleDownloadPhotos({
   folderId,

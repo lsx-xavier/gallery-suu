@@ -1,5 +1,5 @@
-import { googleApi, GoogleAuthApi } from '@/config/apis/google';
-import { findFolderAndCheckWeb } from '@/utils/findTheFolderOfImage';
+import { googleApi, GoogleAuthApi } from '@/src/config/apis/google';
+import { findFolderAndCheckWeb } from '@/src/utils/find-the-folder-of-image';
 
 export default async function getImagesFrom(
   targetFolder: string,

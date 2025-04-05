@@ -1,8 +1,8 @@
 'use server';
 
 import { RequestCreateAccountDto } from '@/app/services/create-account';
-import prisma from '@/config/primsa';
-import { hashPassword } from '@/utils/encrypt-decrypt';
+import prisma from '@/src/config/primsa';
+import { hashPassword } from '@/src/utils/encrypt-decrypt';
 import { Prisma } from '@prisma/client';
 
 export type UserWithFolders = Prisma.UsersGetPayload<{

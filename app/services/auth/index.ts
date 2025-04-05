@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { authToken } from '@/config/AuthToken';
-import prisma from '@/config/primsa';
-import { comparePassword } from '@/utils/encrypt-decrypt';
+import { authToken } from '@/src/config/AuthToken';
+import prisma from '@/src/config/primsa';
+import { comparePassword } from '@/src/utils/encrypt-decrypt';
 import { NextRequest } from 'next/server';
 
 export default async function auth(req: NextRequest): Promise<{ message: any; code: number }> {

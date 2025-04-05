@@ -1,5 +1,5 @@
-import { getFoldersByIdOrQuery } from '@/config/apis/google';
-import { redis } from '@/config/redis';
+import { getFoldersByIdOrQuery } from '@/src/config/apis/google';
+import { redis } from '@/src/config/redis';
 import { processFolderStructure } from '../crawler/helper';
 
 export async function checkIfFolderExists(folders: string[]) {
