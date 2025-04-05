@@ -12,21 +12,21 @@ export default async function AdminIndex() {
 
       <div className="flex gap-4">
         <div className="flex flex-col gap-2">
-          <h3 className="font-semibold text-sm">Pastas Mapeadas</h3>
+          <h3 className="text-sm font-semibold">Pastas Mapeadas</h3>
           <p>
             <strong>{allFolders.length}</strong>
           </p>
         </div>
 
         <div className="flex flex-col gap-2">
-          <h3 className="font-semibold text-sm">Usuários Criados</h3>
+          <h3 className="text-sm font-semibold">Usuários Criados</h3>
           <p>
             <strong>{allUsers.length}</strong>
           </p>
         </div>
       </div>
 
-      <div className="flex gap-2 mt-6">
+      <div className="mt-6 flex gap-2">
         <Link href="/admin/pastas" className="text-sm text-blue-500">
           Ver pastas mapeadas
         </Link>

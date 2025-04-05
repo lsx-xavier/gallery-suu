@@ -23,11 +23,11 @@ export default function Modal({
       <Dialog.Trigger className="cursor-pointer">{trigger}</Dialog.Trigger>
 
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 bg-[#0F1010] bg-opacity-85 backdrop-blur-[2px]" />
+        <Dialog.Overlay className="bg-opacity-85 fixed inset-0 bg-[#0F1010] backdrop-blur-[2px]" />
 
         <Dialog.Content className="fixed inset-0">
           {whitCloseButton && (
-            <Dialog.Close className="absolute right-2 top-2 rounded-full">
+            <Dialog.Close className="absolute top-2 right-2 rounded-full">
               <Button className="!rounded-full">
                 <X className="text-2xl text-white" />
               </Button>

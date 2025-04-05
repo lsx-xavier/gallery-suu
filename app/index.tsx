@@ -1,10 +1,11 @@
 'use client';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import Image from 'next/image';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { UIEvent, useCallback, useEffect, useRef, useState } from 'react';
 
 export default function Home() {
-  const [images, setImages] = useState([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [images, setImages] = useState<any[]>([]);
   const [nextPageToken, setNextPageToken] = useState('');
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -29,11 +30,11 @@ export default function Home() {
     }
 
     setLoading(false);
-  }, []);
+  }, [hasMore, loading, nextPageToken]);
 
   useEffect(() => {
     fetchImages();
-  }, []);
+  }, [fetchImages]);
 
   const parentRef = useRef<HTMLDivElement>(null);
   const rowVirtualizer = useVirtualizer({
@@ -42,7 +43,8 @@ export default function Home() {
     estimateSize: () => 100, // Estima o tamanho de cada item,
   });
 
-  const onScroll = (e: React.UIEvent) => {
+  const onScroll = (e: UIEvent<HTMLDivElement>) => {
+    // @ts-expect-error - e.target.scrollHeight is not defined
     const bottom = e.target.scrollHeight === e.target.scrollTop + e.target.clientHeight;
     if (bottom && hasMore) {
       fetchImages(); // Carregar mais imagens ao alcançar o final

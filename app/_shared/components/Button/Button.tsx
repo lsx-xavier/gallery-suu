@@ -40,20 +40,12 @@ export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPr
     return (
       <Component
         ref={ref}
-        className={`
-        ${baseClasses}
-        ${variantClasses[variant]}
-        ${sizeClasses[size]}
-        ${fullWidth ? 'w-full' : ''}
-        ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}
-        ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
-        ${className || ''}
-      `}
+        className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${fullWidth ? 'w-full' : ''} ${isLoading ? 'cursor-not-allowed opacity-70' : ''} ${disabled ? 'cursor-not-allowed opacity-50' : ''} ${className || ''}`}
         disabled={disabled || isLoading}
         {...props}
       >
         {isLoading && (
-          <svg className="animate-spin -ml-1 mr-3 h-5 w-5" fill="none" viewBox="0 0 24 24">
+          <svg className="mr-3 -ml-1 h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24">
             <circle
               className="opacity-25"
               cx="12"
