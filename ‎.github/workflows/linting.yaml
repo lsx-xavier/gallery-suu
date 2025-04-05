@@ -1,6 +1,6 @@
 name: Linting
 
-on: pull_request
+on: []
 
 jobs:
   prettier:
@@ -15,12 +15,6 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-
-      - name: List files in directory
-        run: ls -la
-
-      - name: Show Prettier version
-        run: npx prettier --version
 
       - name: Run prettier
         run: npm run lint:prettier:check
