@@ -13,7 +13,7 @@ export function ListaDePastas({ allFolders }: { allFolders: FolderWithHierarchy 
   return (
     <div className="flex flex-col gap-6">
       <input
-        className="w-full p-2 border border-gray-300 rounded-md"
+        className="w-full rounded-md border border-gray-300 p-2"
         type="text"
         placeholder="Pesquisar"
         value={search}
@@ -26,7 +26,7 @@ export function ListaDePastas({ allFolders }: { allFolders: FolderWithHierarchy 
             folder.some((f) => f.folderName.toLowerCase().includes(term.toLowerCase())),
           )
           .map(([key, folder]) => (
-            <div key={key} className="flex flex-col gap-2 mb-8">
+            <div key={key} className="mb-8 flex flex-col gap-2">
               <div className="mb-1 border-b border-gray-300 pb-1">
                 <h3 className="text-sm font-bold">{folder[0].parentName}</h3>
               </div>
@@ -37,10 +37,10 @@ export function ListaDePastas({ allFolders }: { allFolders: FolderWithHierarchy 
                     <Link
                       href={`/admin/pastas/${f.id}`}
                       key={f.id}
-                      className="flex items-center aspect-square"
+                      className="flex aspect-square items-center"
                     >
                       <Image src={f.thumbId} alt={f.folderName} width={100} height={100} />
-                      <h5 className="text-sm font-bold absolute bottom-0 left-0 bg-black/50 text-white p-2">
+                      <h5 className="absolute bottom-0 left-0 bg-black/50 p-2 text-sm font-bold text-white">
                         {f.folderName}
                       </h5>
                     </Link>

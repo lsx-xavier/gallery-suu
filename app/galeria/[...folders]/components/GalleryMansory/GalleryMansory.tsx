@@ -150,7 +150,7 @@ export function GalleryMansory({ folders }: FolderRouterDto) {
 
   if (isEmpty) {
     return (
-      <div className="flex flex-col justify-center items-center h-screen gap-4">
+      <div className="flex h-screen flex-col items-center justify-center gap-4">
         <h1 className="text-2xl font-bold">
           Suas fotos estão sendo tratadas com carinho, por favor, tente novamente mais tarde.
           conosco.
@@ -162,7 +162,7 @@ export function GalleryMansory({ folders }: FolderRouterDto) {
 
   if (!images && !isFetching) {
     return (
-      <div className="flex flex-col justify-center items-center h-screen gap-4">
+      <div className="flex h-screen flex-col items-center justify-center gap-4">
         <h1 className="text-2xl font-bold">
           Ocorreu um erro ao carregar as fotos, por favor, tente novamente.
         </h1>
@@ -186,7 +186,7 @@ export function GalleryMansory({ folders }: FolderRouterDto) {
           <Modal
             key={String(images?.[virtualRow.index]?.id)}
             title={
-              <div className="max-w-[50%] absolute top-2 left-1/2 -translate-x-1/2 flex flex-col md:flex-row  justify-center items-center gap-2 z-10">
+              <div className="absolute top-2 left-1/2 z-10 flex max-w-[50%] -translate-x-1/2 flex-col items-center justify-center gap-2 md:flex-row">
                 <h3>{titleOfModal}</h3>
                 <Button
                   className="flex items-center justify-center"
@@ -216,7 +216,7 @@ export function GalleryMansory({ folders }: FolderRouterDto) {
                   '=view',
                 )}
                 alt={images?.[virtualRow.index]?.name || ''}
-                className="w-full rounded-lg !relative !h-[auto]"
+                className="!relative !h-[auto] w-full rounded-lg"
                 objectFit="cover"
                 width={1920}
                 height={1080}
@@ -244,7 +244,7 @@ export function GalleryMansory({ folders }: FolderRouterDto) {
         Array.from({ length: 18 }).map((_, index) => (
           <div
             key={index}
-            className="relative break-inside-avoid aspect-square aspect-w-1 aspect-h-1 rounded-lg overflow-hidden"
+            className="aspect-w-1 aspect-h-1 relative aspect-square break-inside-avoid overflow-hidden rounded-lg"
           >
             <ShimmerComponent w={1920} h={1080} />
           </div>

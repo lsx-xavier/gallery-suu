@@ -86,11 +86,11 @@ export default function Gallery({
         opacity: { duration: 0.2 },
       }}
     >
-      <div className="wide:h-full absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 max-w-[90%] w-screen md:aspect-[3/2] justify-center flex items-center max-h-[90%] md:max-h-[75%]">
+      <div className="wide:h-full absolute top-1/2 left-1/2 flex max-h-[90%] w-screen max-w-[90%] -translate-x-1/2 -translate-y-1/2 items-center justify-center md:aspect-[3/2] md:max-h-[75%]">
         {hasPrevImage && (
           <Button
             onClick={prevImage}
-            className="absolute left-4 top-1/2 -translate-y-1/2 !rounded-full"
+            className="absolute top-1/2 left-4 -translate-y-1/2 !rounded-full"
             variant="primary"
           >
             <CaretLeft className="text-2xl text-white" />
@@ -106,7 +106,7 @@ export default function Gallery({
         <Image
           src={(currentImage?.webContentLink as string).replaceAll('=download', '=view')}
           alt={currentImage?.name || ''}
-          className="object-contain max-h-[100%]"
+          className="max-h-[100%] object-contain"
           quality={50}
           objectFit="fill"
           width={Number(currentImage?.imageMediaMetadata?.width) || 1920}
@@ -118,7 +118,7 @@ export default function Gallery({
         {hasNextImage && (
           <Button
             onClick={nextImage}
-            className="absolute right-4 top-1/2 -translate-y-1/2 !rounded-full"
+            className="absolute top-1/2 right-4 -translate-y-1/2 !rounded-full"
             variant="primary"
             isLoading={isLoadingMoreImage}
           >
@@ -149,7 +149,7 @@ export default function Gallery({
                   }}
                   exit={{ width: '0%' }}
                   onClick={() => setTheCurrentImage(indexOfCurrentImage)}
-                  className={`relative flex w-full shrink-0 transform-gpu items-center justify-center overflow-hidden focus:outline-none ${indexOfCurrentImage - 1 === 0 ? 'rounded-l-md' : ''} ${id === listOfImages[listOfImages.length - 1].id ? 'rounded-r-md' : ''} ${id === currentImage.id ? 'rounded-md shadow shadow-black/50 z-10' : ''}`}
+                  className={`relative flex w-full shrink-0 transform-gpu items-center justify-center overflow-hidden focus:outline-none ${indexOfCurrentImage - 1 === 0 ? 'rounded-l-md' : ''} ${id === listOfImages[listOfImages.length - 1].id ? 'rounded-r-md' : ''} ${id === currentImage.id ? 'z-10 rounded-md shadow shadow-black/50' : ''}`}
                 >
                   <Image
                     className={`${

@@ -91,7 +91,7 @@ export default function GaleriaPage({ params }: GaleriaPageProps) {
           <Image
             src={(images[virtualRow.index]?.webContentLink as string).split('&export=download')[0]}
             alt={images[virtualRow.index]?.name}
-            className='"w-full rounded-lg !relative !h-[auto]'
+            className='"w-full !relative !h-[auto] rounded-lg'
             objectFit="cover"
             loading="lazy"
             width={1920}

@@ -71,7 +71,7 @@ export function FormCreateUser({ folders }: FormCreateUserProps) {
   if (info) {
     return (
       <div
-        className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 py-8 px-12 flex flex-col gap-2 rounded-lg ${info.isError ? 'bg-gray-500' : 'bg-green-950'}`}
+        className={`absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col gap-2 rounded-lg px-12 py-8 ${info.isError ? 'bg-gray-500' : 'bg-green-950'}`}
       >
         <button type="button" onClick={() => setInfo(undefined)} className="absolute top-1 right-2">
           X
@@ -80,11 +80,11 @@ export function FormCreateUser({ folders }: FormCreateUserProps) {
           {info.text}
 
           {!info.isError && (
-            <div className="flex gap-4 justify-end">
+            <div className="flex justify-end gap-4">
               <button
                 type="button"
                 onClick={() => setInfo(undefined)}
-                className="border border-white bg-transparent rounded-md py-3 hover:bg-white/30 p-3"
+                className="rounded-md border border-white bg-transparent p-3 py-3 hover:bg-white/30"
               >
                 Fechar
               </button>
@@ -94,7 +94,7 @@ export function FormCreateUser({ folders }: FormCreateUserProps) {
                 onClick={() =>
                   redirect(`/galeria/${folders.filter((i) => i !== 'create').join('/')}`)
                 }
-                className="border border-white bg-transparent rounded-md py-3 hover:bg-white/30 p-3"
+                className="rounded-md border border-white bg-transparent p-3 py-3 hover:bg-white/30"
               >
                 Ir para galeria
               </button>
@@ -106,21 +106,21 @@ export function FormCreateUser({ folders }: FormCreateUserProps) {
   }
 
   return (
-    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gray-500 p-8 flex flex-col gap-2 rounded-lg">
-      <p className="mb-6 text-center w-full font-bold text-2xl">Criar Usuário</p>
+    <div className="absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col gap-2 rounded-lg bg-gray-500 p-8">
+      <p className="mb-6 w-full text-center text-2xl font-bold">Criar Usuário</p>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         <div className="flex flex-col gap-2">
           <div className="flex gap-2">
             <input
-              className="border border-zinc-800 bg-transparent rounded-md p-2 text-white placeholder-white"
+              className="rounded-md border border-zinc-800 bg-transparent p-2 text-white placeholder-white"
               placeholder="Usuário"
               type="text"
               name="user"
               onChange={(e) => setUser(e.target.value)}
             />
             <input
-              className="border border-zinc-800 bg-transparent rounded-md p-2 text-white placeholder-white"
+              className="rounded-md border border-zinc-800 bg-transparent p-2 text-white placeholder-white"
               placeholder="Senha"
               type="password"
               name="pass"
@@ -128,7 +128,7 @@ export function FormCreateUser({ folders }: FormCreateUserProps) {
             />
           </div>
           <input
-            className="border border-zinc-800 bg-transparent rounded-md p-2 text-white placeholder-white"
+            className="rounded-md border border-zinc-800 bg-transparent p-2 text-white placeholder-white"
             placeholder="Senha Admin"
             type="password"
             name="adminPass"
@@ -138,7 +138,7 @@ export function FormCreateUser({ folders }: FormCreateUserProps) {
 
         <button
           type="submit"
-          className="border border-zinc-800 bg-transparent rounded-md py-3 hover:bg-zinc-800/30"
+          className="rounded-md border border-zinc-800 bg-transparent py-3 hover:bg-zinc-800/30"
         >
           Enviar
         </button>

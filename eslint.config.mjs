@@ -15,6 +15,7 @@ const eslintConfig = [
 
       // 'plugin:jest/recommended', // for testing files
     ],
+    plugins: ['prettier'],
     ignorePatterns: ['node_modules', 'dist', 'build', 'public', '.next'],
     settings: {
       // next: {
@@ -25,6 +26,28 @@ const eslintConfig = [
         callees: ['classnames'],
         removeDuplicates: true,
       },
+    },
+    rules: {
+      'prettier/prettier': [
+        'error',
+        {
+          singleQuote: true,
+          semi: true,
+          trailingComma: 'all',
+          printWidth: 100,
+          tabWidth: 2,
+        },
+      ],
+      'prettier/prettier': [
+        'warn',
+        {
+          singleQuote: true,
+          semi: true,
+          trailingComma: 'all',
+          printWidth: 100,
+          tabWidth: 2,
+        },
+      ],
     },
   }),
 ];
