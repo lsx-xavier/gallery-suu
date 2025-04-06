@@ -18,20 +18,20 @@ export const Button = forwardRef(function Button<T extends 'button' | 'a'>(
   }: ButtonProps & { as?: T },
   ref: T extends 'button' ? React.Ref<HTMLButtonElement> : React.Ref<HTMLAnchorElement>,
 ) {
-  const baseClasses = 'inline-flex items-center justify-center rounded-md font-medium p-2';
+  const baseClasses = 'inline-flex items-center justify-center rounded-md font-medium';
 
   const variantClasses = {
     primary: 'bg-[#0F1010] bg-opacity-75 hover:bg-opacity-100 [&>*]:hover:opacity-60',
     secondary: 'bg-gray-200 text-gray-900 hover:bg-gray-300',
-    outline: 'border-2 border-blue-600 text-blue-600 hover:bg-blue-50',
+    outline: 'border-2 border-blue-600 text-blue-600',
     ghost: 'text-blue-600 hover:bg-blue-50',
     link: 'text-blue-600 hover:underline',
   };
 
   const sizeClasses = {
-    sm: 'text-sm',
-    md: 'text-base',
-    lg: 'text-lg',
+    sm: 'text-sm p-1',
+    md: 'text-base p-2',
+    lg: 'text-lg p-3',
   };
 
   const Component = as === 'a' ? Link : as;
@@ -40,7 +40,7 @@ export const Button = forwardRef(function Button<T extends 'button' | 'a'>(
     // @ts-expect-error - This is a workaround to avoid the type error
     <Component
       ref={ref}
-      className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${fullWidth ? 'w-full' : ''} ${isLoading ? 'cursor-not-allowed opacity-70' : ''} ${disabled ? 'cursor-not-allowed opacity-50' : ''} ${className || ''}`}
+      className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${fullWidth ? 'w-full' : ''} ${isLoading ? 'cursor-not-allowed opacity-70' : ''} ${disabled ? 'cursor-not-allowed opacity-50' : ''} ${className || ''} cursor-pointer hover:bg-[inerit]/80`}
       disabled={disabled || isLoading}
       {...props}
     >

@@ -44,3 +44,12 @@ model Folder {
 
   @@map("folders")
 }
+
+model SyncControl {
+  id            String   @id @default(uuid())
+  type          String   // e.g., 'DRIVE_FOLDERS'
+  lastPageToken String
+  createdAt     DateTime @default(now())
+
+  @@map("sync_control")
+}
