@@ -1,6 +1,6 @@
 'use client';
-import { authToken } from '@/(infra)/config/AuthToken';
-import { getTokenCookie } from '@/(infra)/utils/get-token-cookie';
+import { authToken } from '@/infra/config/AuthToken';
+import { getTokenCookie } from '@/infra/utils/get-token-cookie';
 import { useCallback, useEffect, useState } from 'react';
 import { AuthForm } from '../AuthForm';
 import { FormCreateUser } from '../CreateUserForm';

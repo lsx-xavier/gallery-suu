@@ -1,4 +1,4 @@
-import { redis } from '@/(infra)/config/redis';
+import { redis } from '@/infra/config/redis';
 import { NextResponse } from 'next/server';
 
 export async function GET() {

@@ -1,9 +1,9 @@
 'use client';
 
-import { Button } from '@/(infra)/components';
-import Modal from '@/(infra)/components/Modal';
-import httpClient from '@/(infra)/config/httpClient';
-import { ShimmerComponent, ShimmerImage } from '@/(infra)/utils/shimmer-image';
+import { Button } from '@/infra/components';
+import Modal from '@/infra/components/Modal';
+import httpClient from '@/infra/config/httpClient';
+import { ShimmerComponent, ShimmerImage } from '@/infra/utils/shimmer-image';
 import { DownloadSimple } from '@phosphor-icons/react/dist/ssr';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import Image from 'next/image';

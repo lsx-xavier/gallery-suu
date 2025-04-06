@@ -1,9 +1,9 @@
 'use client';
 
 import { getAllImagesByFolder } from '@/app/_shared/actions/get-images-by-folder/action';
-import { removeImgExtension } from '@/app/_shared/utils/remove-img-extensions';
-import useDebounce from '@/(infra)/hooks/use-debounce/use-debounce';
-import { ShimmerImage } from '@/(infra)/utils/shimmer-image';
+import { removeImgExtension } from '@/infra/utils/remove-img-extensions';
+import useDebounce from '@/infra/hooks/use-debounce/use-debounce';
+import { ShimmerImage } from '@/infra/utils/shimmer-image';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 

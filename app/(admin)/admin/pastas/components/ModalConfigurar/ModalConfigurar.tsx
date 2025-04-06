@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/(infra)/components/Button';
+import { Button } from '@/infra/components/Button';
 import { Users } from '@prisma/client';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';

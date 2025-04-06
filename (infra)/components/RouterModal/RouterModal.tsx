@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { Button } from '@/(infra)/components';
+import { Button } from '@/infra/components';
 
 type RouterModalProps = {
   children: React.ReactNode;
