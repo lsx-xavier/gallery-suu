@@ -45,14 +45,21 @@ export function ThumbGallery({ folderId, onSelect }: ThumbGalleryProps) {
     setIsLoadingSelectedPhoto(true);
 
     const findedPhoto = photos.find(
-      (photo) => removeImgExtension(photo.name) === removeImgExtension(selectedNamePhotoBounced),
+      (photo) => removeImgExtension(selectedNamePhotoBounced) === removeImgExtension(photo.name),
     );
+
+    if (!findedPhoto) {
+      setIsLoadingSelectedPhoto(false);
+      setSelectedPhoto(undefined);
+
+      return;
+    }
 
     setSelectedPhoto({
       webContentLink: findedPhoto.webContentLink.replaceAll('=download', '=view'),
       name: findedPhoto.name,
     });
-    onSelect(findedPhoto.webContentLink.replaceAll('=download', '=view'));
+    onSelect(findedPhoto.id);
 
     setIsLoadingSelectedPhoto(false);
   }, [isLoadingPhotos, onSelect, photos, selectedNamePhotoBounced]);

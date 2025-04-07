@@ -1,5 +1,7 @@
 'use server';
 
+import { streamToBuffer } from '@/(infra)/utils/stream-to-buffer';
+import { getImageById } from '@/app/_shared/actions/get-images-by-folder/action';
 import prisma from '@/infra/config/primsa';
 import { Folder, Prisma } from '@prisma/client';
 import { SelectedInfos } from './components/ModalConfigurar/ModalConfigurar';
@@ -89,13 +91,36 @@ export async function updateUserIdInFolders(userId: string, folders: string[]) {
 }
 
 export async function updateFolderInfos(folderId: string, infos: SelectedInfos) {
+  if (!infos.photo) {
+    throw {
+      status: 404,
+      message: 'Nenhuma imagem encontrada',
+    };
+  }
+
+  const maybeImage = await getImageById(infos.photo);
+
+  if (!maybeImage) {
+    throw {
+      status: 404,
+      message: 'Nenhuma imagem encontrada',
+    };
+  }
+
+  // Converte o Readable Stream em um Buffer
+  const imageData = await streamToBuffer(maybeImage.data);
+
+  // Convert buffer to base64 string
+  const base64Image = imageData.toString('base64');
+  const imageSrc = `data:image/jpeg;base64,${base64Image}`; // Adjust the MIME type as necessary
+
   await prisma.folder.update({
     where: { id: folderId },
     data: {
       users: {
         set: infos.users?.map((id) => ({ id })),
       },
-      thumbId: infos.photo,
+      thumbId: imageSrc,
     },
   });
 }

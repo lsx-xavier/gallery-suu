@@ -25,7 +25,6 @@ export function ModalConfigurar() {
   const [selectedUsers, setSelectedUsers] = useState<{ [id: string]: boolean }[] | undefined>(
     undefined,
   );
-  console.log({ selectedUsers });
 
   const [selectedPhoto, setSelectedPhoto] = useState<string | undefined>(undefined);
 
