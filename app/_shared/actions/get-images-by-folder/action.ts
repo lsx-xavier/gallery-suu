@@ -76,8 +76,6 @@ export async function getAllImagesByFolder(folderId: string) {
 
         allImages = [...allImages, ...(res.data.files || [])];
 
-        console.log('getAllImagesByFolder', nextPageToken, res.data.nextPageToken);
-
         if (typeof res.data.nextPageToken === 'string') {
           nextPageToken = res.data.nextPageToken;
         } else {

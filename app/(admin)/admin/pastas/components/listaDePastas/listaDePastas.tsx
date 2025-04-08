@@ -42,7 +42,7 @@ export function ListaDePastas({ allFolders }: { allFolders: FolderWithHierarchy 
                       className="relative flex aspect-square max-h-[400px] items-center shadow-[0_0_7px_1px_rgba(0,0,0,0.2)]"
                     >
                       <Image
-                        src={f.thumbId || placeholderSuu}
+                        src={f.thumbFolder?.photoUrl || placeholderSuu}
                         alt={f.folderName || 'Suu Fotos'}
                         fill
                         className="max-h-full max-w-full object-cover"

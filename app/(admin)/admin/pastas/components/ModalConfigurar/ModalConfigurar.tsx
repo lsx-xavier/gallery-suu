@@ -1,18 +1,17 @@
 'use client';
 
 import { Button } from '@/infra/components/Button';
-import { Users } from '@prisma/client';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getAllUsers, UserWithFolders } from '../../../usuarios/action';
-import { FoldersWithUsers, getFolderById, updateFolderInfos } from '../../action';
+import {
+  FoldersWithUsers,
+  getFolderById,
+  updateFolderInfos,
+  updateFolderInfosProps,
+} from '../../action';
 import { ThumbGallery } from './ThumbGallery';
 import { UserSelection } from './UserSelection';
-
-export type SelectedInfos = {
-  users: Users['id'][] | undefined;
-  photo: string | undefined;
-};
 
 export function ModalConfigurar() {
   const router = useRouter();
@@ -26,7 +25,7 @@ export function ModalConfigurar() {
     undefined,
   );
 
-  const [selectedPhoto, setSelectedPhoto] = useState<string | undefined>(undefined);
+  const [selectedPhoto, setSelectedPhoto] = useState<updateFolderInfosProps['photo'] | undefined>();
 
   useEffect(() => {
     Promise.all([getFolderById(folderId as string), getAllUsers()]).then(([folder, users]) => {
@@ -39,8 +38,16 @@ export function ModalConfigurar() {
   }, [folderId]);
 
   const handleSave = async () => {
-    await updateFolderInfos(folderId as string, {
-      users: [],
+    if (!selectedPhoto) {
+      // TODO: Mostrar um toast de erro
+      console.log('Nenhuma foto selecionada');
+
+      return;
+    }
+
+    await updateFolderInfos({
+      folderId: folderId as string,
+      usersIds: Object.keys(selectedUsers || {}),
       photo: selectedPhoto,
     });
 
@@ -67,7 +74,7 @@ export function ModalConfigurar() {
             />
 
             <div className="flex-1">
-              <ThumbGallery folderId={folderId as string} onSelect={setSelectedPhoto} />
+              <ThumbGallery folder={folder as FoldersWithUsers} onSelect={setSelectedPhoto} />
             </div>
           </div>
         </>
