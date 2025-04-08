@@ -76,8 +76,6 @@ export async function getAllImagesByFolder(folderId: string) {
 
         allImages = [...allImages, ...(res.data.files || [])];
 
-        console.log('getAllImagesByFolder', nextPageToken, res.data.nextPageToken);
-
         if (typeof res.data.nextPageToken === 'string') {
           nextPageToken = res.data.nextPageToken;
         } else {
@@ -87,4 +85,20 @@ export async function getAllImagesByFolder(folderId: string) {
   }
 
   return allImages;
+}
+
+/**
+ * @description Get an image by its id
+ * @param imageId - The id of the image
+ * @returns The image (GaxiosResponse<Stream.Readable> Buffer do google drive)
+ */
+export async function getImageById(imageId: string) {
+  const drive = await driveWithAuth();
+
+  const image = await drive.files.get(
+    { fileId: imageId, alt: 'media' },
+    { responseType: 'stream' },
+  );
+
+  return image;
 }

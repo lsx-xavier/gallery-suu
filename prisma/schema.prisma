@@ -30,7 +30,7 @@ model Users {
 }
 
 model Folder {
-  id               String   @id @default(uuid())
+  id               String        @id @default(uuid())
   folderName       String
   slugFolder       String
   folderId         String
@@ -38,16 +38,30 @@ model Folder {
   slugParent       String
   parentId         String?
   folderIdOfPhotos String
-  thumbId          String
-  users            Users[] @relation("UserFolders")
+  users            Users[]       @relation("UserFolders")
   createdAt        DateTime
+  
+  thumbFolder      ThumbFolder? @relation("ThumbFolder")
 
   @@map("folders")
 }
 
+model ThumbFolder {
+  id        String   @id @default(uuid())
+  folderId  String   @unique
+  photoId   String
+  photoName String
+  photoUrl  String
+  createdAt DateTime @default(now())
+
+  folder Folder @relation("ThumbFolder", fields: [folderId], references: [id])
+
+  @@map("thumbFolder")
+}
+
 model SyncControl {
   id            String   @id @default(uuid())
-  type          String   // e.g., 'DRIVE_FOLDERS'
+  type          String // e.g., 'DRIVE_FOLDERS'
   lastPageToken String
   createdAt     DateTime @default(now())
 
